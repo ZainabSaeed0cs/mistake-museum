@@ -1,0 +1,447 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit a Mistake | Mistake Museum</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #F7F3EA;
+            color: #25232B;
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 24px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e8e1d5;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 23px;
+            font-weight: 700;
+            color: #25232B;
+            text-decoration: none;
+        }
+
+        nav a {
+            color: #55515d;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        nav a:hover { color: #9278d8; }
+
+        main {
+            max-width: 760px;
+            margin: 65px auto;
+            padding: 0 22px;
+        }
+
+        .eyebrow {
+            color: #8d75d2;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(34px, 6vw, 52px);
+            line-height: 1.1;
+            margin-bottom: 14px;
+        }
+
+        .intro {
+            color: #716d77;
+            line-height: 1.7;
+            margin-bottom: 35px;
+        }
+
+        .form-card {
+            background: white;
+            border: 1px solid #eee8df;
+            border-radius: 22px;
+            padding: 32px;
+            box-shadow: 0 12px 40px rgba(37,35,43,.05);
+        }
+
+        .field { margin-bottom: 25px; }
+
+        label, .field-title {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #ded9e2;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            background: #fff;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            border-color: #a993e9;
+            box-shadow: 0 0 0 3px #b9a6f522;
+        }
+
+        textarea {
+            min-height: 105px;
+            resize: vertical;
+        }
+
+        .subjects {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .subject-option {
+            border: 1px solid #ded9e2;
+            border-radius: 12px;
+            padding: 13px 18px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .subject-option:has(input:checked) {
+            background: #f0eaff;
+            border-color: #a993e9;
+        }
+
+        .subject-option input { margin-right: 7px; }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            border: 1px solid #ded9e2;
+            background: white;
+            padding: 11px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .tab.active {
+            background: #25232B;
+            color: white;
+            border-color: #25232B;
+        }
+
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        .upload-box {
+            border: 2px dashed #cfc5df;
+            background: #faf8ff;
+            border-radius: 16px;
+            padding: 35px 20px;
+            text-align: center;
+        }
+
+        .upload-box p {
+            color: #77717f;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        input[type="file"] {
+            display: block;
+            max-width: 100%;
+            margin: 15px auto 0;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        #fileName {
+            margin-top: 12px;
+            color: #648c6a;
+            font-size: 13px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: #25232B;
+            color: white;
+            border: none;
+            border-radius: 13px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: .2s;
+        }
+
+        .submit-btn:hover { background: #51476a; }
+        .submit-btn:disabled { opacity: .6; cursor: wait; }
+
+        #message {
+            display: none;
+            margin-top: 22px;
+            padding: 18px;
+            border-radius: 13px;
+            background: #f0eaff;
+            border: 1px solid #ded2ff;
+            white-space: pre-line;
+            line-height: 1.7;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #7561b2;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        @media(max-width: 600px) {
+            header { padding: 20px; }
+            nav a { margin-left: 12px; font-size: 12px; }
+            .form-card { padding: 22px 18px; }
+            main { margin-top: 40px; }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <a class="logo" href="/">mistake museum.</a>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/#how">How it works</a>
+    </nav>
+</header>
+
+<main>
+    <div class="eyebrow">Your learning journey starts here ✳</div>
+    <h1>Let's look at that mistake.</h1>
+    <p class="intro">
+        Upload a photo of your work or type it out. Every mistake has something
+        to teach us — let's figure out what happened.
+    </p>
+
+    <div class="form-card">
+        <form id="mistakeForm">
+
+            <div class="field">
+                <span class="field-title">01 — Choose your subject</span>
+                <div class="subjects">
+                    <label class="subject-option">
+                        <input type="radio" name="subject" value="Mathematics" checked>
+                        Mathematics
+                    </label>
+                    <label class="subject-option">
+                        <input type="radio" name="subject" value="Physics">
+                        Physics
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="topic">02 — What topic are you studying?</label>
+                <input type="text" id="topic" placeholder="e.g. Quadratic Equations" required>
+            </div>
+
+            <div class="field">
+                <span class="field-title">03 — Show us your work</span>
+
+                <div class="tabs">
+                    <button type="button" class="tab active" id="photoTab">📸 Upload a photo</button>
+                    <button type="button" class="tab" id="typeTab">⌨️ Type instead</button>
+                </div>
+
+                <div class="panel active" id="photoPanel">
+                    <div class="upload-box">
+                        <div style="font-size:35px;">📷</div>
+                        <strong>Drop your work here</strong>
+                        <p>JPG or PNG · Maximum size 5 MB</p>
+                        <input type="file" id="photo" accept="image/jpeg,image/png">
+                        <div id="fileName"></div>
+                    </div>
+                </div>
+
+                <div class="panel" id="typePanel">
+                    <div class="field">
+                        <label for="question">The original question</label>
+                        <textarea id="question" placeholder="Write the question here..."></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label for="studentAnswer">Your answer</label>
+                        <textarea id="studentAnswer" placeholder="What did you write?"></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label for="correction">The correct answer</label>
+                        <textarea id="correction" placeholder="What was the correct answer?"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Analyze my mistake →</button>
+        </form>
+
+        <div id="message"></div>
+    </div>
+
+    <a class="back-link" href="/">← Back to home</a>
+</main>
+
+<script>
+    const photoTab = document.getElementById("photoTab");
+    const typeTab = document.getElementById("typeTab");
+    const photoPanel = document.getElementById("photoPanel");
+    const typePanel = document.getElementById("typePanel");
+
+    photoTab.addEventListener("click", () => {
+        photoTab.classList.add("active");
+        typeTab.classList.remove("active");
+        photoPanel.classList.add("active");
+        typePanel.classList.remove("active");
+    });
+
+    typeTab.addEventListener("click", () => {
+        typeTab.classList.add("active");
+        photoTab.classList.remove("active");
+        typePanel.classList.add("active");
+        photoPanel.classList.remove("active");
+    });
+
+    const photoInput = document.getElementById("photo");
+    const fileName = document.getElementById("fileName");
+
+    photoInput.addEventListener("change", () => {
+        const file = photoInput.files[0];
+
+        if (!file) {
+            fileName.textContent = "";
+            return;
+        }
+
+        if (!["image/jpeg", "image/png"].includes(file.type)) {
+            alert("Please upload a JPG or PNG image.");
+            photoInput.value = "";
+            fileName.textContent = "";
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert("Your image must be smaller than 5 MB.");
+            photoInput.value = "";
+            fileName.textContent = "";
+            return;
+        }
+
+        fileName.textContent = "✓ " + file.name;
+    });
+
+    document.getElementById("mistakeForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const message = document.getElementById("message");
+        const form = document.getElementById("mistakeForm");
+        const button = form.querySelector(".submit-btn");
+
+        const formData = new FormData();
+
+        const selectedSubject = document.querySelector('input[name="subject"]:checked');
+        const subject = selectedSubject.value;
+        const topic = document.getElementById("topic").value.trim();
+
+        formData.append("subject", subject);
+        formData.append("topic", topic);
+
+        const isTyping = typePanel.classList.contains("active");
+
+        if (isTyping) {
+            const question = document.getElementById("question").value.trim();
+            const answer = document.getElementById("studentAnswer").value.trim();
+            const correction = document.getElementById("correction").value.trim();
+
+            if (!question || !answer || !correction || !topic) {
+                alert("Please fill in the topic, question, your answer and correct answer.");
+                return;
+            }
+
+            formData.append("question", question);
+            formData.append("studentAnswer", answer);
+            formData.append("correction", correction);
+
+        } else {
+            const photo = photoInput.files[0];
+
+            if (!photo || !topic) {
+                alert("Please select a photo and enter its topic.");
+                return;
+            }
+
+            formData.append("photo", photo);
+        }
+
+        button.disabled = true;
+        button.textContent = "Analyzing your mistake...";
+
+        message.style.display = "block";
+        message.textContent = "Your mistake is being analyzed...";
+
+        try {
+            const response = await fetch("/api/diagnose", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || "Something went wrong.");
+            }
+
+            message.textContent =
+                "Diagnosis: " + result.label +
+                "\nReason: " + result.reason +
+                "\nTopic: " + result.topic +
+                "\nConfidence: " + (result.confidence * 100) + "%" +
+                "\nError step: " + result.errorStep;
+
+        } catch (error) {
+            message.textContent = "Oops! " + error.message;
+        } finally {
+            button.disabled = false;
+            button.textContent = "Analyze my mistake →";
+            message.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    });
+</script>
+</body>
+</html>

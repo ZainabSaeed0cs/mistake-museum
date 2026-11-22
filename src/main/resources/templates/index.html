@@ -1,0 +1,933 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mistake Museum — Every Mistake Has a Story</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --cream: #F7F3EA;
+    --ink: #25232B;
+    --purple: #B9A6F5;
+    --pink: #F5A9B9;
+    --yellow: #F5D77C;
+    --green: #BBD9BD;
+    --muted: #77727C;
+    --white: #FFFEFC;
+    --line: #E9E2D8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button, a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.container {
+    width: min(1160px, 88%);
+    margin: auto;
+}
+
+/* NAVIGATION */
+
+nav {
+    height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    background: rgba(247,243,234,.9);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(15px);
+    padding: 0 6%;
+}
+
+.logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 23px;
+    font-weight: 700;
+    letter-spacing: -1.3px;
+}
+
+.logo span {
+    color: #9479df;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.nav-links a {
+    font-size: 13px;
+    font-weight: 700;
+    color: #625d69;
+    transition: color .2s;
+}
+
+.nav-links a:hover {
+    color: #9479df;
+}
+
+.nav-cta {
+    background: var(--ink);
+    color: white;
+    padding: 12px 19px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 800;
+    transition: .2s;
+}
+
+.nav-cta:hover, .primary:hover {
+    background: #514568;
+    transform: translateY(-2px);
+}
+
+/* HERO */
+
+.hero {
+    min-height: 620px;
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    align-items: center;
+    gap: 50px;
+    padding: 75px 0 85px;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #EAE1FF;
+    color: #7156bb;
+    border-radius: 30px;
+    padding: 9px 14px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .6px;
+    margin-bottom: 25px;
+}
+
+.eyebrow-dot {
+    width: 7px;
+    height: 7px;
+    background: #9479df;
+    border-radius: 50%;
+}
+
+h1, h2, h3 {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.hero h1 {
+    font-size: clamp(48px, 6vw, 75px);
+    letter-spacing: -4px;
+    line-height: 1.04;
+    max-width: 610px;
+}
+
+.hero h1 span {
+    color: #9479df;
+    position: relative;
+}
+
+.hero-copy {
+    max-width: 490px;
+    color: var(--muted);
+    line-height: 1.85;
+    font-size: 15px;
+    margin: 24px 0 29px;
+}
+
+.hero-buttons {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    flex-wrap: wrap;
+}
+
+.primary {
+    background: var(--ink);
+    color: white;
+    padding: 16px 22px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: .2s;
+}
+
+.secondary {
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.secondary:hover {
+    color: #9479df;
+}
+
+.hero-footnote {
+    font-size: 11px;
+    color: #928b96;
+    margin-top: 22px;
+}
+
+/* HERO ART */
+
+.hero-art {
+    position: relative;
+    min-height: 410px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blob {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: #E8DFFF;
+    border-radius: 48% 52% 62% 38% / 42% 45% 55% 58%;
+    transform: rotate(-12deg);
+}
+
+.archive-card {
+    position: relative;
+    z-index: 2;
+    width: 300px;
+    background: white;
+    border: 1px solid #f0ebf3;
+    padding: 25px;
+    border-radius: 22px;
+    box-shadow: 0 25px 65px #33244b19;
+    transform: rotate(-4deg);
+}
+
+.archive-top {
+    display: flex;
+    justify-content: space-between;
+    color: #938b9b;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+}
+
+.archive-number {
+    color: #b4a9bd;
+}
+
+.archive-tag {
+    display: inline-block;
+    background: #FBE2E8;
+    color: #BD647A;
+    padding: 7px 11px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 800;
+    margin-bottom: 14px;
+}
+
+.archive-card h3 {
+    font-size: 23px;
+    margin-bottom: 9px;
+}
+
+.archive-card p {
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--muted);
+}
+
+.fake-line {
+    height: 7px;
+    background: #eeeaf4;
+    border-radius: 20px;
+    margin-top: 13px;
+}
+
+.fake-line.short {
+    width: 65%;
+}
+
+.archive-bottom {
+    margin-top: 23px;
+    padding-top: 14px;
+    border-top: 1px solid #f0edf2;
+    color: #9479df;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.sticker {
+    position: absolute;
+    z-index: 3;
+    padding: 12px 16px;
+    border-radius: 13px;
+    font-size: 11px;
+    font-weight: 800;
+    box-shadow: 0 9px 20px #25232b10;
+}
+
+.sticker-yellow {
+    background: var(--yellow);
+    top: 42px;
+    right: 4px;
+    transform: rotate(9deg);
+}
+
+.sticker-pink {
+    background: var(--pink);
+    bottom: 48px;
+    left: 0;
+    transform: rotate(-8deg);
+}
+
+.sparkle {
+    position: absolute;
+    color: #9479df;
+    font-size: 35px;
+}
+
+.sparkle-one {
+    top: 30px;
+    left: 28px;
+}
+
+.sparkle-two {
+    right: 25px;
+    bottom: 30px;
+    color: #e59aab;
+}
+
+/* GENERAL SECTION */
+
+.section {
+    padding: 95px 0;
+}
+
+.section-heading {
+    max-width: 620px;
+    text-align: center;
+    margin: 0 auto 43px;
+}
+
+.section-label {
+    color: #9479df;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-bottom: 13px;
+}
+
+.section-heading h2 {
+    font-size: clamp(30px, 4vw, 43px);
+    letter-spacing: -1.8px;
+}
+
+.section-heading p {
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: 14px;
+    margin-top: 13px;
+}
+
+/* SUBJECTS */
+
+.subjects-section {
+    background: #F0EBE2;
+}
+
+.subjects {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.subject-card {
+    min-height: 240px;
+    padding: 31px;
+    border-radius: 22px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .25s, box-shadow .25s;
+}
+
+.subject-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 35px #25232b12;
+}
+
+.maths {
+    background: #E6DCFF;
+}
+
+.physics {
+    background: #F9E0E6;
+}
+
+.subject-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+    background: #ffffff9c;
+    display: grid;
+    place-items: center;
+    font-size: 25px;
+    margin-bottom: 22px;
+}
+
+.subject-card h3 {
+    font-size: 25px;
+    margin-bottom: 9px;
+}
+
+.subject-card p {
+    max-width: 350px;
+    color: #625d69;
+    font-size: 13px;
+    line-height: 1.75;
+}
+
+.subject-note {
+    display: inline-block;
+    background: #ffffffa8;
+    border-radius: 30px;
+    padding: 8px 12px;
+    font-size: 10px;
+    font-weight: 800;
+    margin-top: 19px;
+}
+
+.subject-decoration {
+    position: absolute;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 100px;
+    font-weight: 700;
+    opacity: .12;
+    right: 25px;
+    bottom: -10px;
+    transform: rotate(-10deg);
+}
+
+/* MISTAKE TYPES */
+
+.mistakes-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 13px;
+}
+
+.mistake-type {
+    background: white;
+    border: 1px solid #eee9e2;
+    padding: 20px 15px;
+    border-radius: 17px;
+    min-height: 155px;
+    transition: transform .2s;
+}
+
+.mistake-type:hover {
+    transform: translateY(-5px);
+}
+
+.mistake-emoji {
+    font-size: 23px;
+    margin-bottom: 15px;
+}
+
+.mistake-type h3 {
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+.mistake-type p {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+.type-purple { border-top: 4px solid var(--purple); }
+.type-pink { border-top: 4px solid var(--pink); }
+.type-yellow { border-top: 4px solid var(--yellow); }
+.type-green { border-top: 4px solid var(--green); }
+.type-blue { border-top: 4px solid #A9CDEB; }
+
+/* HOW IT WORKS */
+
+.how-section {
+    background: #F0EBE2;
+}
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 19px;
+}
+
+.step {
+    background: var(--white);
+    padding: 29px;
+    border-radius: 20px;
+    border: 1px solid #eee9e2;
+}
+
+.step-number {
+    width: 42px;
+    height: 42px;
+    background: var(--yellow);
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 23px;
+}
+
+.step h3 {
+    font-size: 19px;
+    margin-bottom: 10px;
+}
+
+.step p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+/* FINAL CTA */
+
+.cta {
+    background: var(--ink);
+    color: white;
+    text-align: center;
+    padding: 70px 25px;
+    border-radius: 27px;
+    margin: 90px auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta h2 {
+    font-size: clamp(30px, 4vw, 43px);
+    letter-spacing: -1.5px;
+    position: relative;
+}
+
+.cta p {
+    color: #c7c1cf;
+    font-size: 13px;
+    margin: 15px auto 25px;
+    line-height: 1.7;
+    position: relative;
+}
+
+.cta a {
+    background: var(--yellow);
+    color: var(--ink);
+    display: inline-block;
+    padding: 15px 23px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 800;
+    position: relative;
+    transition: .2s;
+}
+
+.cta a:hover {
+    transform: translateY(-3px);
+    background: #ffe69c;
+}
+
+.cta-star {
+    position: absolute;
+    color: #B9A6F5;
+    font-size: 75px;
+    opacity: .35;
+}
+
+.star-left {
+    top: 10px;
+    left: 8%;
+}
+
+.star-right {
+    bottom: -20px;
+    right: 8%;
+}
+
+/* FOOTER */
+
+footer {
+    border-top: 1px solid var(--line);
+    padding: 28px 0;
+}
+
+.footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.footer-note {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 850px) {
+    .hero {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 70px 0 50px;
+    }
+
+    .hero-art {
+        min-height: 370px;
+    }
+
+    .mistakes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .steps {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 600px) {
+    nav {
+        height: 68px;
+        padding: 0 6%;
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .hero h1 {
+        letter-spacing: -2.5px;
+    }
+
+    .hero-art {
+        min-height: 330px;
+    }
+
+    .blob {
+        width: 240px;
+        height: 240px;
+    }
+
+    .archive-card {
+        width: 260px;
+    }
+
+    .sticker-yellow {
+        right: -5px;
+    }
+
+    .subjects {
+        grid-template-columns: 1fr;
+    }
+
+    .mistakes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .section {
+        padding: 70px 0;
+    }
+
+    .cta {
+        margin: 65px auto;
+        padding: 55px 20px;
+    }
+
+    .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <a href="#" class="logo">mistake<span>museum.</span></a>
+
+    <div class="nav-links">
+        <a href="#subjects">Subjects</a>
+        <a href="#mistakes">Mistake types</a>
+        <a href="#how">How it works</a>
+        <a href="#about">About</a>
+    </div>
+
+    <a href="#subjects" class="nav-cta">Explore museum ↗</a>
+</nav>
+
+<main>
+
+<section class="container hero">
+
+    <div class="hero-content">
+        <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            YOUR LEARNING ERA STARTS HERE
+        </div>
+
+        <h1>
+            Your mistakes deserve a <span>second look.</span>
+        </h1>
+
+        <p class="hero-copy">
+            Wrong answer? Plot twist: it might not be what you think.
+            Maybe it's a concept gap, a tiny slip, or a question
+            you read a little too quickly. Let's find out.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="#subjects" class="primary">
+                Explore your mistakes <span>↗</span>
+            </a>
+            <a href="#how" class="secondary">See how it works →</a>
+        </div>
+
+        <p class="hero-footnote">
+            ✳ No shame in the mistakes. They're literally the point.
+        </p>
+    </div>
+
+    <div class="hero-art">
+        <div class="blob"></div>
+
+        <div class="sparkle sparkle-one">✳</div>
+        <div class="sparkle sparkle-two">✦</div>
+
+        <div class="archive-card">
+            <div class="archive-top">
+                <span>THE MISTAKE ARCHIVE</span>
+                <span class="archive-number">NO. 001</span>
+            </div>
+
+            <div class="archive-tag">✳ CONCEPT GAP</div>
+
+            <h3>Almost got it.</h3>
+
+            <p>
+                You remembered the formula, but missed
+                the idea behind why it works.
+            </p>
+
+            <div class="fake-line"></div>
+            <div class="fake-line short"></div>
+
+            <div class="archive-bottom">
+                EVERY MISTAKE HAS A STORY.
+            </div>
+        </div>
+
+        <div class="sticker sticker-yellow">brain loading... 💭</div>
+        <div class="sticker sticker-pink">Oops → Aha! ✨</div>
+    </div>
+
+</section>
+
+<section class="section subjects-section" id="subjects">
+    <div class="container">
+
+        <div class="section-heading">
+            <div class="section-label">THE COLLECTION</div>
+            <h2>Pick your subject.</h2>
+            <p>
+                Two subjects to start with. A whole lot of
+                things to discover about how you learn.
+            </p>
+        </div>
+
+        <div class="subjects">
+
+            <div class="subject-card maths">
+                <div class="subject-icon">∑</div>
+                <h3>Mathematics</h3>
+                <p>
+                    Calculation slips, formula confusion,
+                    and concepts that just haven't clicked yet.
+                    Let's unpack them.
+                </p>
+                <div class="subject-note">TIME TO CRACK THE CODE ✳</div>
+                <div class="subject-decoration">x²</div>
+            </div>
+
+            <div class="subject-card physics">
+                <div class="subject-icon">⚛</div>
+                <h3>Physics</h3>
+                <p>
+                    Units, equations, and reasoning gone sideways.
+                    Find out where your solution took a wrong turn.
+                </p>
+                <div class="subject-note">LET'S GET INTO IT ✨</div>
+                <div class="subject-decoration">F=ma</div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="section" id="mistakes">
+    <div class="container">
+
+        <div class="section-heading">
+            <div class="section-label">NOT ALL WRONG ANSWERS ARE THE SAME</div>
+            <h2>Meet the five mistake types.</h2>
+            <p>
+                A wrong answer is just the beginning.
+                Understanding the reason is where the real learning happens.
+            </p>
+        </div>
+
+        <div class="mistakes-grid">
+
+            <div class="mistake-type type-purple">
+                <div class="mistake-emoji">🧠</div>
+                <h3>Concept gap</h3>
+                <p>The underlying idea isn't fully clear yet.</p>
+            </div>
+
+            <div class="mistake-type type-pink">
+                <div class="mistake-emoji">😵‍💫</div>
+                <h3>Careless slip</h3>
+                <p>A small calculation or execution error.</p>
+            </div>
+
+            <div class="mistake-type type-yellow">
+                <div class="mistake-emoji">👀</div>
+                <h3>Misread question</h3>
+                <p>A detail in the question got overlooked.</p>
+            </div>
+
+            <div class="mistake-type type-green">
+                <div class="mistake-emoji">📐</div>
+                <h3>Formula misuse</h3>
+                <p>The formula wasn't applied correctly.</p>
+            </div>
+
+            <div class="mistake-type type-blue">
+                <div class="mistake-emoji">📝</div>
+                <h3>Incomplete answer</h3>
+                <p>Part of the solution or explanation is missing.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="section how-section" id="how">
+    <div class="container">
+
+        <div class="section-heading">
+            <div class="section-label">THE METHOD</div>
+            <h2>Three steps. One smarter you.</h2>
+            <p>
+                We don't just point out what's wrong.
+                We help you understand what happened.
+            </p>
+        </div>
+
+        <div class="steps">
+
+            <div class="step">
+                <div class="step-number">01</div>
+                <h3>Show your work.</h3>
+                <p>
+                    Submit the question along with your attempted
+                    solution. Yes, even the messy bits.
+                </p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">02</div>
+                <h3>Find the why.</h3>
+                <p>
+                    Get your mistake analyzed and categorized
+                    so you can understand what went wrong.
+                </p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">03</div>
+                <h3>Make your comeback.</h3>
+                <p>
+                    Spot recurring patterns and focus your
+                    practice on the things you actually need.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="container cta" id="about">
+    <div class="cta-star star-left">✳</div>
+    <div class="cta-star star-right">✦</div>
+
+    <h2>Your mistakes aren't the end.</h2>
+    <p>
+        They're clues. They're lessons. They're part of the process.
+        <br>Ready to look a little closer?
+    </p>
+
+    <a href="#subjects">Explore the museum ↗</a>
+</section>
+
+</main>
+
+<footer>
+    <div class="container footer-inner">
+        <a href="#" class="logo">mistake<span>museum.</span></a>
+        <p class="footer-note">
+            Made for curious minds. Not perfect answers. ✳
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>
