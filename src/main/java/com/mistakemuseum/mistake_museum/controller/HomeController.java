@@ -16,6 +16,12 @@ public class HomeController {
     public String upload() {
         return "upload";
     }
+
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
+    }
 }
+
 
 
