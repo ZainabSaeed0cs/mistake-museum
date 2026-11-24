@@ -1,8 +1,8 @@
-
 package com.mistakemuseum.mistake_museum.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "students")
@@ -12,13 +12,14 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
+    private String anonymousId = UUID.randomUUID().toString();
+
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String passwordHash;
 
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -35,6 +36,10 @@ public class Student {
 
     public Long getId() {
         return id;
+    }
+
+    public String getAnonymousId() {
+        return anonymousId;
     }
 
     public String getName() {

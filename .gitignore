@@ -34,3 +34,4 @@ build/
 .env
 *.local.properties
 uploads/
+data/
