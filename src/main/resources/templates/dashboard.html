@@ -1,0 +1,537 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Dashboard | Mistake Museum</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #F7F3EA;
+            color: #25232B;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .navbar {
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e8e2d7;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 23px;
+            font-weight: 700;
+            text-decoration: none;
+            color: #25232B;
+        }
+
+        .logo span {
+            color: #9A82DF;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #77717B;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            color: #9A82DF;
+        }
+
+        .profile {
+            background: #E8DFFB;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            color: #7055B4;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 45px auto;
+            padding: 0 25px;
+        }
+
+        .welcome {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .eyebrow {
+            color: #927ACB;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(30px, 5vw, 43px);
+            letter-spacing: -1.5px;
+        }
+
+        .welcome p {
+            color: #827C85;
+            margin-top: 8px;
+        }
+
+        .primary-btn {
+            background: #25232B;
+            color: white;
+            padding: 14px 22px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .primary-btn:hover {
+            background: #7055B4;
+            transform: translateY(-2px);
+        }
+
+        .demo-note {
+            background: #FFF5D8;
+            border: 1px solid #F0DFAE;
+            color: #82672B;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 23px;
+            border-radius: 18px;
+            border: 1px solid #eee9e1;
+        }
+
+        .stat-icon {
+            font-size: 22px;
+            margin-bottom: 18px;
+        }
+
+        .stat-label {
+            color: #89828D;
+            font-size: 13px;
+        }
+
+        .stat-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .stat-foot {
+            color: #9A82DF;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #eee9e1;
+            border-radius: 18px;
+            padding: 25px;
+        }
+
+        .panel h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 19px;
+            margin-bottom: 6px;
+        }
+
+        .panel-subtitle {
+            color: #928B95;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .mistake-row {
+            margin-bottom: 22px;
+        }
+
+        .mistake-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 9px;
+        }
+
+        .mistake-info span:last-child {
+            color: #8D8492;
+        }
+
+        .bar {
+            height: 9px;
+            background: #F1EEF3;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .fill {
+            height: 100%;
+            border-radius: 20px;
+        }
+
+        .purple { background: #B9A6F5; width: 72%; }
+        .pink { background: #F5A9B9; width: 48%; }
+        .yellow { background: #F5D77C; width: 35%; }
+        .green { background: #BBD9BD; width: 22%; }
+        .blue { background: #A9C8EA; width: 15%; }
+
+        .topic {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #F1EEF3;
+            font-size: 14px;
+        }
+
+        .topic:last-child {
+            border-bottom: none;
+        }
+
+        .topic-tag {
+            background: #F1EAFB;
+            color: #826BB8;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .activity {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 15px 0;
+            border-bottom: 1px solid #F1EEF3;
+        }
+
+        .activity:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: #F1EAFB;
+            font-size: 18px;
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-details strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .activity-details span {
+            color: #958E98;
+            font-size: 12px;
+        }
+
+        .activity-tag {
+            font-size: 11px;
+            color: #826BB8;
+            background: #F1EAFB;
+            padding: 6px 9px;
+            border-radius: 20px;
+        }
+
+        .bottom-cta {
+            background: #E9E1FA;
+            border-radius: 18px;
+            padding: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .bottom-cta h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 21px;
+            margin-bottom: 6px;
+        }
+
+        .bottom-cta p {
+            color: #716783;
+            font-size: 13px;
+        }
+
+        footer {
+            text-align: center;
+            color: #A39BA4;
+            padding: 35px 15px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 800px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .nav-links a {
+                display: none;
+            }
+
+            .container {
+                margin-top: 30px;
+            }
+
+            .stats {
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 17px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <a href="/" class="logo">mistake museum<span>.</span></a>
+
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/upload">Submit an answer</a>
+        <a href="/dashboard">Dashboard</a>
+        <div class="profile">S</div>
+    </div>
+</nav>
+
+<main class="container">
+
+    <section class="welcome">
+        <div>
+            <div class="eyebrow">YOUR LEARNING SPACE ✦</div>
+            <h1>Hey there, student! 👋</h1>
+            <p>Your mistakes are clues. Let's see what they're telling you.</p>
+        </div>
+
+        <a href="/upload" class="primary-btn">+ Analyse an answer</a>
+    </section>
+
+    <div class="demo-note">
+        ✨ Dashboard preview — these are sample figures for now. Your real learning data will appear here once we connect the database.
+    </div>
+
+    <section class="stats">
+
+        <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-label">Answers analysed</div>
+            <div class="stat-number">24</div>
+            <div class="stat-foot">Sample data</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🧠</div>
+            <div class="stat-label">Concept gaps found</div>
+            <div class="stat-number">08</div>
+            <div class="stat-foot">Sample data</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-label">Topics practised</div>
+            <div class="stat-number">06</div>
+            <div class="stat-foot">Sample data</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-label">Learning streak</div>
+            <div class="stat-number">3 days</div>
+            <div class="stat-foot">Sample data</div>
+        </div>
+
+    </section>
+
+    <section class="main-grid">
+
+        <div class="panel">
+            <h2>Your mistake patterns</h2>
+            <p class="panel-subtitle">A breakdown of the types of mistakes you've made · Sample data</p>
+
+            <div class="mistake-row">
+                <div class="mistake-info">
+                    <span>🧩 Concept gap</span>
+                    <span>72%</span>
+                </div>
+                <div class="bar"><div class="fill purple"></div></div>
+            </div>
+
+            <div class="mistake-row">
+                <div class="mistake-info">
+                    <span>👀 Misread question</span>
+                    <span>48%</span>
+                </div>
+                <div class="bar"><div class="fill pink"></div></div>
+            </div>
+
+            <div class="mistake-row">
+                <div class="mistake-info">
+                    <span>⚡ Careless slip</span>
+                    <span>35%</span>
+                </div>
+                <div class="bar"><div class="fill yellow"></div></div>
+            </div>
+
+            <div class="mistake-row">
+                <div class="mistake-info">
+                    <span>📐 Formula misuse</span>
+                    <span>22%</span>
+                </div>
+                <div class="bar"><div class="fill green"></div></div>
+            </div>
+
+            <div class="mistake-row">
+                <div class="mistake-info">
+                    <span>✍️ Incomplete answer</span>
+                    <span>15%</span>
+                </div>
+                <div class="bar"><div class="fill blue"></div></div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Topics to revisit</h2>
+            <p class="panel-subtitle">Your sample weak spots, ranked by priority</p>
+
+            <div class="topic">
+                <span>Quadratic equations</span>
+                <span class="topic-tag">High priority</span>
+            </div>
+
+            <div class="topic">
+                <span>Newton's laws</span>
+                <span class="topic-tag">High priority</span>
+            </div>
+
+            <div class="topic">
+                <span>Trigonometry</span>
+                <span class="topic-tag">Practise</span>
+            </div>
+
+            <div class="topic">
+                <span>Chemical bonding</span>
+                <span class="topic-tag">Practise</span>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="panel">
+        <h2>Recently analysed answers</h2>
+        <p class="panel-subtitle">A little history of your learning journey · Sample activity</p>
+
+        <div class="activity">
+            <div class="activity-icon">📐</div>
+            <div class="activity-details">
+                <strong>Quadratic equations</strong>
+                <span>Mathematics · Sample entry</span>
+            </div>
+            <span class="activity-tag">Concept gap</span>
+        </div>
+
+        <div class="activity">
+            <div class="activity-icon">⚡</div>
+            <div class="activity-details">
+                <strong>Newton's second law</strong>
+                <span>Physics · Sample entry</span>
+            </div>
+            <span class="activity-tag">Misread question</span>
+        </div>
+
+        <div class="activity">
+            <div class="activity-icon">🧪</div>
+            <div class="activity-details">
+                <strong>Chemical bonding</strong>
+                <span>Chemistry · Sample entry</span>
+            </div>
+            <span class="activity-tag">Formula misuse</span>
+        </div>
+    </section>
+
+    <section class="bottom-cta">
+        <div>
+            <h2>Ready to turn another mistake into progress?</h2>
+            <p>Submit an answer and discover what you can learn from it.</p>
+        </div>
+
+        <a href="/upload" class="primary-btn">Let's analyse →</a>
+    </section>
+
+</main>
+
+<footer>
+    made with curiosity (and a few mistakes) ♡ · mistake museum.
+</footer>
+
+</body>
+</html>

@@ -71,7 +71,7 @@
             margin-bottom: 35px;
         }
 
-        .form-card {
+        .form-card, .result-card {
             background: white;
             border: 1px solid #eee8df;
             border-radius: 22px;
@@ -88,7 +88,7 @@
             margin-bottom: 10px;
         }
 
-        input[type="text"], textarea {
+        input[type="text"], textarea, select {
             width: 100%;
             padding: 14px 16px;
             border: 1px solid #ded9e2;
@@ -99,7 +99,7 @@
             background: #fff;
         }
 
-        input[type="text"]:focus, textarea:focus {
+        input[type="text"]:focus, textarea:focus, select:focus {
             border-color: #a993e9;
             box-shadow: 0 0 0 3px #b9a6f522;
         }
@@ -135,6 +135,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .tab {
@@ -185,6 +186,33 @@
             font-size: 13px;
         }
 
+        .voice-btn {
+            margin-top: 10px;
+            background: #f0eaff;
+            border-color: #d8c9fa;
+            color: #66519f;
+        }
+
+        .voice-btn.recording {
+            background: #fce8ec;
+            border-color: #efb7c4;
+            color: #a33d56;
+        }
+
+        .voice-help {
+            color: #77717f;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 8px;
+        }
+
+        #voiceStatus {
+            font-size: 13px;
+            color: #7561b2;
+            line-height: 1.6;
+            margin: 10px 0 15px;
+        }
+
         .submit-btn {
             width: 100%;
             padding: 16px;
@@ -203,14 +231,103 @@
         .submit-btn:hover { background: #51476a; }
         .submit-btn:disabled { opacity: .6; cursor: wait; }
 
+        .result-card {
+            display: none;
+            margin-top: 25px;
+        }
+
+        .result-eyebrow {
+            color: #8d75d2;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .result-card h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 27px;
+            margin-bottom: 18px;
+        }
+
+        .category {
+            display: inline-block;
+            background: #f0eaff;
+            color: #66519f;
+            border-radius: 30px;
+            padding: 9px 15px;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 22px;
+        }
+
+        .result-section {
+            background: #faf8ff;
+            border: 1px solid #eee8f7;
+            padding: 18px;
+            border-radius: 14px;
+            margin-bottom: 14px;
+        }
+
+        .result-section h3 {
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .result-section p {
+            color: #716d77;
+            font-size: 14px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .result-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .meta-box {
+            background: #f7f3ea;
+            padding: 16px;
+            border-radius: 13px;
+        }
+
+        .meta-box span {
+            display: block;
+            color: #77717f;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .meta-box strong {
+            font-size: 15px;
+            overflow-wrap: anywhere;
+        }
+
+        .new-attempt-btn {
+            width: 100%;
+            padding: 14px;
+            background: #25232B;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 18px;
+            font-family: inherit;
+        }
+
         #message {
             display: none;
             margin-top: 22px;
             padding: 18px;
             border-radius: 13px;
-            background: #f0eaff;
-            border: 1px solid #ded2ff;
-            white-space: pre-line;
+            background: #fff0ed;
+            border: 1px solid #f4c9c1;
+            color: #8e4035;
             line-height: 1.7;
             font-size: 14px;
             overflow-wrap: anywhere;
@@ -228,8 +345,9 @@
         @media(max-width: 600px) {
             header { padding: 20px; }
             nav a { margin-left: 12px; font-size: 12px; }
-            .form-card { padding: 22px 18px; }
+            .form-card, .result-card { padding: 22px 18px; }
             main { margin-top: 40px; }
+            .result-meta { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -247,12 +365,15 @@
     <div class="eyebrow">Your learning journey starts here ✳</div>
     <h1>Let's look at that mistake.</h1>
     <p class="intro">
-        Upload a photo of your work or type it out. Every mistake has something
-        to teach us — let's figure out what happened.
+        Upload a photo of your work, type your answer, or use your voice.
+        Every mistake has something to teach us — let's figure out what happened.
     </p>
 
     <div class="form-card">
         <form id="mistakeForm">
+            <input type="hidden" th:if="${_csrf != null}"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
 
             <div class="field">
                 <span class="field-title">01 — Choose your subject</span>
@@ -261,9 +382,20 @@
                         <input type="radio" name="subject" value="Mathematics" checked>
                         Mathematics
                     </label>
+
                     <label class="subject-option">
                         <input type="radio" name="subject" value="Physics">
                         Physics
+                    </label>
+
+                    <label class="subject-option">
+                        <input type="radio" name="subject" value="Chemistry">
+                        Chemistry
+                    </label>
+
+                    <label class="subject-option">
+                        <input type="radio" name="subject" value="English">
+                        English
                     </label>
                 </div>
             </div>
@@ -278,7 +410,7 @@
 
                 <div class="tabs">
                     <button type="button" class="tab active" id="photoTab">📸 Upload a photo</button>
-                    <button type="button" class="tab" id="typeTab">⌨️ Type instead</button>
+                    <button type="button" class="tab" id="typeTab">⌨️ Type or speak</button>
                 </div>
 
                 <div class="panel active" id="photoPanel">
@@ -292,20 +424,41 @@
                 </div>
 
                 <div class="panel" id="typePanel">
+
+                    <div class="field">
+                        <label for="voiceLanguage">🎙 Voice input language</label>
+                        <select id="voiceLanguage">
+                            <option value="en-US">English</option>
+                            <option value="ur-PK">Urdu</option>
+                        </select>
+                        <p class="voice-help">
+                            Choose your language. Press the microphone button beside any text box to speak.
+                            You can edit the transcription before submitting.
+                        </p>
+                    </div>
+
                     <div class="field">
                         <label for="question">The original question</label>
-                        <textarea id="question" placeholder="Write the question here..."></textarea>
+                        <textarea id="question" placeholder="Write or dictate the question here..."></textarea>
+                        <button type="button" class="tab voice-btn" data-target="question">🎙 Dictate question</button>
                     </div>
 
                     <div class="field">
                         <label for="studentAnswer">Your answer</label>
-                        <textarea id="studentAnswer" placeholder="What did you write?"></textarea>
+                        <textarea id="studentAnswer" placeholder="Write or speak your answer..."></textarea>
+                        <button type="button" class="tab voice-btn" data-target="studentAnswer">🎙 Dictate answer</button>
                     </div>
 
                     <div class="field">
                         <label for="correction">The correct answer</label>
-                        <textarea id="correction" placeholder="What was the correct answer?"></textarea>
+                        <textarea id="correction" placeholder="Write or dictate the correct answer..."></textarea>
+                        <button type="button" class="tab voice-btn" data-target="correction">🎙 Dictate correction</button>
                     </div>
+
+                    <p id="voiceStatus" aria-live="polite"></p>
+                    <button type="button" class="tab" id="stopVoice" style="display:none;">
+                        Stop recording
+                    </button>
                 </div>
             </div>
 
@@ -313,6 +466,38 @@
         </form>
 
         <div id="message"></div>
+    </div>
+
+    <div class="result-card" id="resultCard">
+        <div class="result-eyebrow">✳ Your mistake report</div>
+        <h2>Here's what we found.</h2>
+
+        <div class="category" id="resultLabel"></div>
+
+        <div class="result-section">
+            <h3>What went wrong?</h3>
+            <p id="resultReason"></p>
+        </div>
+
+        <div class="result-meta">
+            <div class="meta-box">
+                <span>Topic</span>
+                <strong id="resultTopic"></strong>
+            </div>
+            <div class="meta-box">
+                <span>Confidence score</span>
+                <strong id="resultConfidence"></strong>
+            </div>
+        </div>
+
+        <div class="result-section" style="margin-top:14px;">
+            <h3>Where did it happen?</h3>
+            <p id="resultStep"></p>
+        </div>
+
+        <button class="new-attempt-btn" id="newAttemptBtn">
+            Analyze another mistake →
+        </button>
     </div>
 
     <a class="back-link" href="/">← Back to home</a>
@@ -329,6 +514,7 @@
         typeTab.classList.remove("active");
         photoPanel.classList.add("active");
         typePanel.classList.remove("active");
+        stopRecording();
     });
 
     typeTab.addEventListener("click", () => {
@@ -366,12 +552,128 @@
         fileName.textContent = "✓ " + file.name;
     });
 
+    // Voice recognition
+    const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const voiceStatus = document.getElementById("voiceStatus");
+    const stopVoiceButton = document.getElementById("stopVoice");
+    const voiceButtons = document.querySelectorAll(".voice-btn");
+
+    let recognition = null;
+    let activeVoiceButton = null;
+    let activeTextarea = null;
+    let finalTranscript = "";
+
+    function stopRecording() {
+        if (recognition) {
+            recognition.stop();
+        }
+    }
+
+    voiceButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            if (!SpeechRecognition) {
+                voiceStatus.textContent =
+                    "Voice recognition is not supported in this browser. Please use the latest Google Chrome or type your answer.";
+                return;
+            }
+
+            if (recognition) {
+                stopRecording();
+                return;
+            }
+
+            activeTextarea = document.getElementById(button.dataset.target);
+            activeVoiceButton = button;
+            finalTranscript = "";
+
+            recognition = new SpeechRecognition();
+            recognition.lang = document.getElementById("voiceLanguage").value;
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            button.classList.add("recording");
+            button.textContent = "🔴 Listening...";
+            stopVoiceButton.style.display = "inline-block";
+            voiceStatus.textContent = "Listening... Speak clearly.";
+
+            recognition.onresult = (event) => {
+                let interimTranscript = "";
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript + " ";
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+
+                activeTextarea.value =
+                    finalTranscript + interimTranscript;
+            };
+
+            recognition.onerror = (event) => {
+                voiceStatus.textContent =
+                    "Voice recognition error: " + event.error +
+                    ". You can try again or type your answer.";
+            };
+
+            recognition.onend = () => {
+                recognition = null;
+
+                if (activeVoiceButton) {
+                    activeVoiceButton.classList.remove("recording");
+                    activeVoiceButton.textContent =
+                        activeVoiceButton.dataset.target === "question"
+                            ? "🎙 Dictate question"
+                            : activeVoiceButton.dataset.target === "studentAnswer"
+                                ? "🎙 Dictate answer"
+                                : "🎙 Dictate correction";
+                }
+
+                stopVoiceButton.style.display = "none";
+
+                if (finalTranscript.trim()) {
+                    voiceStatus.textContent =
+                        "✓ Transcription complete. You can edit your text.";
+                }
+
+                activeVoiceButton = null;
+                activeTextarea = null;
+            };
+
+            try {
+                recognition.start();
+                voiceStatus.textContent = "🎙 Microphone starting... Please speak.";
+            } catch (error) {
+                recognition = null;
+                button.classList.remove("recording");
+                button.textContent = "🎙 Dictate";
+                stopVoiceButton.style.display = "none";
+                voiceStatus.textContent =
+                    "Could not start the microphone. Please try again.";
+            }
+        });
+    });
+
+    stopVoiceButton.addEventListener("click", stopRecording);
+
+    // Form submission
     document.getElementById("mistakeForm").addEventListener("submit", async (event) => {
         event.preventDefault();
+
+        stopRecording();
 
         const message = document.getElementById("message");
         const form = document.getElementById("mistakeForm");
         const button = form.querySelector(".submit-btn");
+        const resultCard = document.getElementById("resultCard");
+
+        message.style.display = "none";
+        resultCard.style.display = "none";
 
         const formData = new FormData();
 
@@ -379,8 +681,19 @@
         const subject = selectedSubject.value;
         const topic = document.getElementById("topic").value.trim();
 
+        if (!topic) {
+            alert("Please enter the topic.");
+            return;
+        }
+
         formData.append("subject", subject);
         formData.append("topic", topic);
+
+        const csrfInput = form.querySelector('input[type="hidden"]');
+
+        if (csrfInput && csrfInput.name && csrfInput.value) {
+            formData.append(csrfInput.name, csrfInput.value);
+        }
 
         const isTyping = typePanel.classList.contains("active");
 
@@ -389,7 +702,7 @@
             const answer = document.getElementById("studentAnswer").value.trim();
             const correction = document.getElementById("correction").value.trim();
 
-            if (!question || !answer || !correction || !topic) {
+            if (!question || !answer || !correction) {
                 alert("Please fill in the topic, question, your answer and correct answer.");
                 return;
             }
@@ -401,8 +714,8 @@
         } else {
             const photo = photoInput.files[0];
 
-            if (!photo || !topic) {
-                alert("Please select a photo and enter its topic.");
+            if (!photo) {
+                alert("Please select a photo.");
                 return;
             }
 
@@ -427,21 +740,56 @@
                 throw new Error(result.error || "Something went wrong.");
             }
 
-            message.textContent =
-                "Diagnosis: " + result.label +
-                "\nReason: " + result.reason +
-                "\nTopic: " + result.topic +
-                "\nConfidence: " + (result.confidence * 100) + "%" +
-                "\nError step: " + result.errorStep;
+            document.getElementById("resultLabel").textContent =
+                String(result.label || "Unclassified");
+
+            document.getElementById("resultReason").textContent =
+                String(result.reason || "No explanation was provided.");
+
+            document.getElementById("resultTopic").textContent =
+                String(result.topic || topic);
+
+            const confidence = Number(result.confidence);
+            document.getElementById("resultConfidence").textContent =
+                Number.isFinite(confidence)
+                    ? Math.round(confidence * 100) + "%"
+                    : "Not available";
+
+            document.getElementById("resultStep").textContent =
+                String(result.errorStep || "Not identified");
+
+            message.style.display = "none";
+            resultCard.style.display = "block";
+            resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
 
         } catch (error) {
+            message.style.display = "block";
             message.textContent = "Oops! " + error.message;
+            message.scrollIntoView({ behavior: "smooth", block: "center" });
         } finally {
             button.disabled = false;
             button.textContent = "Analyze my mistake →";
-            message.scrollIntoView({ behavior: "smooth", block: "center" });
         }
+    });
+
+    document.getElementById("newAttemptBtn").addEventListener("click", () => {
+        stopRecording();
+
+        document.getElementById("mistakeForm").reset();
+        document.getElementById("fileName").textContent = "";
+        voiceStatus.textContent = "";
+
+        photoTab.classList.add("active");
+        typeTab.classList.remove("active");
+        photoPanel.classList.add("active");
+        typePanel.classList.remove("active");
+
+        document.getElementById("resultCard").style.display = "none";
+        document.getElementById("message").style.display = "none";
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
     });
 </script>
 </body>
 </html>
+

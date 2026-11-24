@@ -1,4 +1,3 @@
-
 package com.mistakemuseum.mistake_museum.model;
 
 public enum Label {
