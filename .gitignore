@@ -34,4 +34,5 @@ build/
 .env
 *.local.properties
 uploads/
+data/run.log
 data/

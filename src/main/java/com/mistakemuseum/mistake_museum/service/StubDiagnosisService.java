@@ -1,12 +1,13 @@
-
 package com.mistakemuseum.mistake_museum.service;
 
 import com.mistakemuseum.mistake_museum.model.DiagnosisResult;
 import com.mistakemuseum.mistake_museum.model.Label;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Profile("stub")
 public class StubDiagnosisService implements DiagnosisService {
 
     @Override
@@ -27,4 +28,3 @@ public class StubDiagnosisService implements DiagnosisService {
         );
     }
 }
-
