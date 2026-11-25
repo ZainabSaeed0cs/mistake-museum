@@ -84,9 +84,16 @@ public class DiagnoseController {
                     subject, topic, question, studentAnswer, correction, photo
             );
 
-            saveMistake(authentication, request, response, subject, topic, result);
+            Long mistakeId = saveMistake(authentication, request, response, subject, topic, result);
 
-            return ResponseEntity.ok(result);
+            java.util.Map<String, Object> out = new java.util.LinkedHashMap<>();
+            out.put("label", result.label() == null ? null : result.label().name());
+            out.put("reason", result.reason());
+            out.put("topic", result.topic());
+            out.put("confidence", result.confidence());
+            out.put("errorStep", result.errorStep());
+            out.put("mistakeId", mistakeId);
+            return ResponseEntity.ok(out);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (IllegalStateException e) {
@@ -100,7 +107,7 @@ public class DiagnoseController {
     }
 
     // A save problem must not hide a good diagnosis from the student
-    private void saveMistake(Authentication authentication,
+    private Long saveMistake(Authentication authentication,
                              HttpServletRequest request,
                              HttpServletResponse response,
                              String subject,
@@ -118,9 +125,10 @@ public class DiagnoseController {
             mistake.setConfidence(result.confidence());
             mistake.setErrorStep(cut(result.errorStep(), 255));
 
-            mistakeRepository.save(mistake);
+            return mistakeRepository.save(mistake).getId();
         } catch (RuntimeException e) {
             log.error("Could not save the mistake", e);
+            return null;
         }
     }
 

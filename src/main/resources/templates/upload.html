@@ -350,6 +350,8 @@
             .result-meta { grid-template-columns: 1fr; }
         }
     </style>
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 
 <body>
@@ -493,6 +495,18 @@
         <div class="result-section" style="margin-top:14px;">
             <h3>Where did it happen?</h3>
             <p id="resultStep"></p>
+<div id="correctionBox" style="display:none; margin-top:16px;">
+  <label for="correctionSelect" style="display:block; font-weight:600; margin-bottom:6px;">Think the AI got it wrong? Pick the right type:</label>
+  <select id="correctionSelect" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;">
+    <option value="CARELESS_SLIP">Careless slip</option>
+    <option value="CONCEPT_GAP">Concept gap</option>
+    <option value="FORMULA_MISUSE">Formula misuse</option>
+    <option value="INCOMPLETE_ANSWER">Incomplete answer</option>
+    <option value="MISREAD_QUESTION">Misread question</option>
+  </select>
+  <button type="button" id="correctionSave" style="margin-top:10px; padding:10px 16px; border-radius:10px; border:none; background:#23212b; color:#fff; cursor:pointer;">Save my label</button>
+  <p id="correctionMsg" style="margin-top:8px;"></p>
+</div>
         </div>
 
         <button class="new-attempt-btn" id="newAttemptBtn">
@@ -760,6 +774,7 @@
 
             message.style.display = "none";
             resultCard.style.display = "block";
+if (window.setupCorrection) { window.setupCorrection(result); }
             resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
 
         } catch (error) {
@@ -789,6 +804,56 @@
 
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
+</script>
+<form th:action="@{/logout}" method="post" style="position:fixed; top:12px; right:12px; z-index:50;">
+  <button type="submit" style="padding:8px 14px; border-radius:10px; border:1px solid #ddd; background:#fff; cursor:pointer;">Log out</button>
+</form>
+<script>
+(function () {
+  var currentId = null;
+
+  window.setupCorrection = function (result) {
+    currentId = result && result.mistakeId ? result.mistakeId : null;
+    var box = document.getElementById('correctionBox');
+    if (!box) { return; }
+    if (!currentId) { box.style.display = 'none'; return; }
+    document.getElementById('correctionSelect').value = result.label;
+    document.getElementById('correctionMsg').textContent = '';
+    box.style.display = 'block';
+  };
+
+  function meta(name) {
+    var el = document.querySelector('meta[name="' + name + '"]');
+    return el ? el.getAttribute('content') : null;
+  }
+
+  async function saveLabel() {
+    var msg = document.getElementById('correctionMsg');
+    if (!currentId) { return; }
+    var label = document.getElementById('correctionSelect').value;
+    var headers = { 'Content-Type': 'application/json' };
+    var token = meta('_csrf');
+    var headerName = meta('_csrf_header');
+    if (token && headerName) { headers[headerName] = token; }
+    try {
+      var r = await fetch('/api/mistakes/' + currentId + '/label', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ label: label })
+      });
+      var data = await r.json().catch(function () { return {}; });
+      if (!r.ok) { throw new Error(data.error || 'Could not save your label.'); }
+      document.getElementById('resultLabel').textContent = label;
+      msg.textContent = 'Saved. Your dashboard now uses your label.';
+    } catch (e) {
+      msg.textContent = e.message;
+    }
+  }
+
+  document.addEventListener('click', function (e) {
+    if (e.target && e.target.id === 'correctionSave') { saveLabel(); }
+  });
+})();
 </script>
 </body>
 </html>
