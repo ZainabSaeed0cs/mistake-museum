@@ -4,15 +4,19 @@ import com.mistakemuseum.mistake_museum.model.DiagnosisResult;
 import com.mistakemuseum.mistake_museum.model.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Profile;
 import org.springframework.boot.json.JsonParserFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +27,16 @@ public class GeminiDiagnosisService implements DiagnosisService {
 
     private static final Logger log = LoggerFactory.getLogger(GeminiDiagnosisService.class);
     private static final String BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/";
+    private static final int MAX_ATTEMPTS = 3;
 
-    private final RestClient client = RestClient.create();
+    private final RestClient client;
+
+    public GeminiDiagnosisService() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(Duration.ofSeconds(10));
+        factory.setReadTimeout(Duration.ofSeconds(40));
+        this.client = RestClient.builder().requestFactory(factory).build();
+    }
 
     @Override
     public DiagnosisResult diagnose(String subject, String topic, String question,
@@ -61,7 +73,7 @@ public class GeminiDiagnosisService implements DiagnosisService {
                 "confidence" (a number from 0 to 1).
                 """.formatted(nz(subject), nz(question), nz(studentAnswer), nz(correction), nz(topic));
 
-        List<Object> parts = new java.util.ArrayList<>();
+        List<Object> parts = new ArrayList<>();
         parts.add(Map.of("text", prompt));
 
         if (photo != null && !photo.isEmpty()) {
@@ -83,14 +95,10 @@ public class GeminiDiagnosisService implements DiagnosisService {
                         "responseMimeType", "application/json",
                         "temperature", 0.2));
 
+        String url = BASE_URL + model + ":generateContent";
+
         try {
-            Map<?, ?> response = client.post()
-                    .uri(BASE_URL + model + ":generateContent")
-                    .header("x-goog-api-key", key)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(body)
-                    .retrieve()
-                    .body(Map.class);
+            Map<?, ?> response = callWithRetry(url, key, body);
 
             String text = extractText(response);
             Map<String, Object> json = JsonParserFactory.getJsonParser().parseMap(text);
@@ -107,20 +115,56 @@ public class GeminiDiagnosisService implements DiagnosisService {
         } catch (RestClientResponseException e) {
             int status = e.getStatusCode().value();
             log.error("Gemini call failed with HTTP {}: {}", status, e.getResponseBodyAsString());
-            if (status == 401 || status == 403) {
+            if (status == 400 || status == 401 || status == 403) {
                 throw new IllegalStateException("The AI service key is missing or not accepted.");
             } else if (status == 404) {
                 throw new IllegalStateException("The AI model name is wrong. Set GEMINI_MODEL.");
-            } else if (status == 429) {
+            } else if (status == 429 || status == 503) {
                 throw new IllegalStateException("The AI is busy right now. Please try again in a minute.");
             }
             throw new IllegalStateException("The AI could not analyse this right now. Please try again.");
-        } catch (IllegalStateException | IllegalArgumentException e) {
-            log.error("Gemini diagnosis failed: {}", e.getMessage());
-            throw new IllegalStateException("The AI could not read its own answer. Please try again.");
+        } catch (ResourceAccessException e) {
+            log.error("Gemini call timed out or could not connect: {}", e.getMessage());
+            throw new IllegalStateException("The AI took too long to answer. Please try again.");
         } catch (RuntimeException e) {
             log.error("Gemini diagnosis failed", e);
-            throw new IllegalStateException("The AI could not analyse this right now. Please try again.");
+            throw new IllegalStateException("The AI gave an answer we could not read. Please try again.");
+        }
+    }
+
+    private Map<?, ?> callWithRetry(String url, String key, Map<String, Object> body) {
+        for (int attempt = 1; ; attempt++) {
+            try {
+                return client.post()
+                        .uri(url)
+                        .header("x-goog-api-key", key)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(body)
+                        .retrieve()
+                        .body(Map.class);
+            } catch (RestClientResponseException e) {
+                int s = e.getStatusCode().value();
+                boolean retryable = (s == 503 || s == 500 || s == 429) && attempt < MAX_ATTEMPTS;
+                if (!retryable) {
+                    throw e;
+                }
+                log.warn("Gemini returned HTTP {} (attempt {} of {}), retrying", s, attempt, MAX_ATTEMPTS);
+                pause(1500L * attempt);
+            } catch (ResourceAccessException e) {
+                if (attempt >= MAX_ATTEMPTS) {
+                    throw e;
+                }
+                log.warn("Gemini call failed (attempt {} of {}), retrying", attempt, MAX_ATTEMPTS);
+                pause(1500L * attempt);
+            }
+        }
+    }
+
+    private static void pause(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
         }
     }
 

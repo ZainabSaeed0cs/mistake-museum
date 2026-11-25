@@ -1,8 +1,8 @@
-
 package com.mistakemuseum.mistake_museum.controller;
 
 import com.mistakemuseum.mistake_museum.model.DiagnosisResult;
 import com.mistakemuseum.mistake_museum.service.DiagnosisService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,10 +59,19 @@ public class DiagnoseController {
             }
         }
 
-        DiagnosisResult result = diagnosisService.diagnose(
-                subject, topic, question, studentAnswer, correction, photo
-        );
-
-        return ResponseEntity.ok(result);
+        try {
+            DiagnosisResult result = diagnosisService.diagnose(
+                    subject, topic, question, studentAnswer, correction, photo
+            );
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Something went wrong. Please try again."));
+        }
     }
 }
