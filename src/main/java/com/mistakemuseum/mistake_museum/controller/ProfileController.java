@@ -6,6 +6,7 @@ import com.mistakemuseum.mistake_museum.service.ProfileService;
 import com.mistakemuseum.mistake_museum.service.StudentService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,8 +22,10 @@ public class ProfileController {
     }
 
     @GetMapping("/api/profile")
-    public ProfileResponse profile(HttpServletRequest request, HttpServletResponse response) {
-        Student student = studentService.getOrCreateStudent(request, response);
+    public ProfileResponse profile(Authentication authentication,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response) {
+        Student student = studentService.getCurrentStudent(authentication, request, response);
         return profileService.buildProfile(student);
     }
 }

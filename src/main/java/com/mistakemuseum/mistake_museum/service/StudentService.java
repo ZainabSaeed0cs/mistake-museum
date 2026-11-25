@@ -1,4 +1,3 @@
-
 package com.mistakemuseum.mistake_museum.service;
 
 import com.mistakemuseum.mistake_museum.model.Student;
@@ -6,6 +5,8 @@ import com.mistakemuseum.mistake_museum.repository.StudentRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,24 @@ public class StudentService {
                           PasswordEncoder passwordEncoder) {
         this.studentRepository = studentRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    // The logged-in student if there is one, otherwise the old cookie student
+    public Student getCurrentStudent(
+            Authentication authentication,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            Optional<Student> loggedIn =
+                    studentRepository.findByEmail(authentication.getName());
+            if (loggedIn.isPresent()) {
+                return loggedIn.get();
+            }
+        }
+        return getOrCreateStudent(request, response);
     }
 
     public Student getOrCreateStudent(

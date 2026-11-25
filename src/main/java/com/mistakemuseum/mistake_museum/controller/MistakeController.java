@@ -6,6 +6,7 @@ import com.mistakemuseum.mistake_museum.repository.MistakeRepository;
 import com.mistakemuseum.mistake_museum.service.StudentService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,8 +28,10 @@ public class MistakeController {
 
     // Returns the current student's mistakes, newest first
     @GetMapping("/api/mistakes")
-    public List<Map<String, Object>> getMyMistakes(HttpServletRequest request, HttpServletResponse response) {
-        Student student = studentService.getOrCreateStudent(request, response);
+    public List<Map<String, Object>> getMyMistakes(Authentication authentication,
+                                                   HttpServletRequest request,
+                                                   HttpServletResponse response) {
+        Student student = studentService.getCurrentStudent(authentication, request, response);
         List<Mistake> mistakes = mistakeRepository.findByStudentOrderByCreatedAtDesc(student);
 
         // We build simple maps so the JSON stays small and has no student details
