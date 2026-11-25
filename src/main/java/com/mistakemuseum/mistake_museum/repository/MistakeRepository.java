@@ -12,4 +12,5 @@ public interface MistakeRepository extends JpaRepository<Mistake, Long> {
     // All mistakes of one student, newest first
     List<Mistake> findByStudentOrderByCreatedAtDesc(Student student);
     List<Mistake> findByStudentId(Long studentId);
+        void deleteByStudentId(Long studentId);
 }
