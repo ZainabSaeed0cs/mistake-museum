@@ -11,5 +11,6 @@ public interface AttemptRepository extends JpaRepository<Attempt, Long> {
     List<Attempt> findBySubject(String subject);
 
     List<Attempt> findByTopic(String topic);
+        void deleteByStudentId(Long studentId);
 
 }
