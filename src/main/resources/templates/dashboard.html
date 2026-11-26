@@ -119,19 +119,10 @@
             transform: translateY(-2px);
         }
 
-        .demo-note {
-            background: #FFF5D8;
-            border: 1px solid #F0DFAE;
-            color: #82672B;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 13px;
-            margin-bottom: 25px;
-        }
-
+        
         .stats {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 16px;
             margin-bottom: 25px;
         }
@@ -219,11 +210,11 @@
             border-radius: 20px;
         }
 
-        .purple { background: #B9A6F5; width: 72%; }
-        .pink { background: #F5A9B9; width: 48%; }
-        .yellow { background: #F5D77C; width: 35%; }
-        .green { background: #BBD9BD; width: 22%; }
-        .blue { background: #A9C8EA; width: 15%; }
+        .purple { background: #B9A6F5; }
+.pink { background: #F5A9B9; }
+.yellow { background: #F5D77C; }
+.green { background: #BBD9BD; }
+.blue { background: #A9C8EA; }
 
         .topic {
             display: flex;
@@ -376,8 +367,8 @@
         <a href="/upload" class="primary-btn">+ Analyse an answer</a>
     </section>
 
-    <div class="demo-note">
-        ✨ Dashboard preview — these are sample figures for now. Your real learning data will appear here once we connect the database.
+    <div id="empty-state" style="display:none; background:white; padding:18px; border-radius:16px; margin-bottom:20px;">
+        No mistakes analysed yet. Analyse your first answer!
     </div>
 
     <section class="stats">
@@ -385,30 +376,20 @@
         <div class="stat-card">
             <div class="stat-icon">📝</div>
             <div class="stat-label">Answers analysed</div>
-            <div class="stat-number">24</div>
-            <div class="stat-foot">Sample data</div>
+            <div class="stat-number" id="total">0</div>
+           
         </div>
 
         <div class="stat-card">
             <div class="stat-icon">🧠</div>
             <div class="stat-label">Concept gaps found</div>
-            <div class="stat-number">08</div>
-            <div class="stat-foot">Sample data</div>
+            <div class="stat-number" id="concept-gaps">0</div>
+            
         </div>
 
-        <div class="stat-card">
-            <div class="stat-icon">🎯</div>
-            <div class="stat-label">Topics practised</div>
-            <div class="stat-number">06</div>
-            <div class="stat-foot">Sample data</div>
-        </div>
+        
 
-        <div class="stat-card">
-            <div class="stat-icon">🔥</div>
-            <div class="stat-label">Learning streak</div>
-            <div class="stat-number">3 days</div>
-            <div class="stat-foot">Sample data</div>
-        </div>
+    
 
     </section>
 
@@ -416,107 +397,62 @@
 
         <div class="panel">
             <h2>Your mistake patterns</h2>
-            <p class="panel-subtitle">A breakdown of the types of mistakes you've made · Sample data</p>
+            <p class="panel-subtitle">A breakdown of the types of mistakes you've made</p>
 
             <div class="mistake-row">
                 <div class="mistake-info">
                     <span>🧩 Concept gap</span>
-                    <span>72%</span>
+                    <span id="pct-CONCEPT_GAP">0%</span>
                 </div>
-                <div class="bar"><div class="fill purple"></div></div>
+                <div class="bar"><div class="fill purple" id="bar-CONCEPT_GAP"></div></div>
             </div>
 
             <div class="mistake-row">
                 <div class="mistake-info">
                     <span>👀 Misread question</span>
-                    <span>48%</span>
+                    <span id="pct-MISREAD_QUESTION">0%</span>
                 </div>
-                <div class="bar"><div class="fill pink"></div></div>
+                <div class="bar"><div class="fill pink" id="bar-MISREAD_QUESTION"></div></div>
             </div>
 
             <div class="mistake-row">
                 <div class="mistake-info">
                     <span>⚡ Careless slip</span>
-                    <span>35%</span>
+                    <span id="pct-CARELESS_SLIP">0%</span>
                 </div>
-                <div class="bar"><div class="fill yellow"></div></div>
+                <div class="bar"><div class="fill yellow" id="bar-CARELESS_SLIP"></div></div>
             </div>
 
             <div class="mistake-row">
                 <div class="mistake-info">
                     <span>📐 Formula misuse</span>
-                    <span>22%</span>
+                    <span id="pct-FORMULA_MISUSE">0%</span>
                 </div>
-                <div class="bar"><div class="fill green"></div></div>
+                <div class="bar"><div class="fill green" id="bar-FORMULA_MISUSE"></div></div>
             </div>
 
             <div class="mistake-row">
                 <div class="mistake-info">
                     <span>✍️ Incomplete answer</span>
-                    <span>15%</span>
+                    <span id="pct-INCOMPLETE_ANSWER">0%</span>
                 </div>
-                <div class="bar"><div class="fill blue"></div></div>
+                <div class="bar"><div class="fill blue" id="bar-INCOMPLETE_ANSWER"></div></div>
             </div>
         </div>
 
         <div class="panel">
             <h2>Topics to revisit</h2>
-            <p class="panel-subtitle">Your sample weak spots, ranked by priority</p>
-
-            <div class="topic">
-                <span>Quadratic equations</span>
-                <span class="topic-tag">High priority</span>
-            </div>
-
-            <div class="topic">
-                <span>Newton's laws</span>
-                <span class="topic-tag">High priority</span>
-            </div>
-
-            <div class="topic">
-                <span>Trigonometry</span>
-                <span class="topic-tag">Practise</span>
-            </div>
-
-            <div class="topic">
-                <span>Chemical bonding</span>
-                <span class="topic-tag">Practise</span>
+            <p class="panel-subtitle">Topics identified from your analysed answers</p>
+        
+            <div id="top-topic" class="topic" style="display:none;">
+                <span id="top-topic-name"></span>
+                <span class="topic-tag">Revisit</span>
             </div>
         </div>
+        
+        </section>
 
-    </section>
-
-    <section class="panel">
-        <h2>Recently analysed answers</h2>
-        <p class="panel-subtitle">A little history of your learning journey · Sample activity</p>
-
-        <div class="activity">
-            <div class="activity-icon">📐</div>
-            <div class="activity-details">
-                <strong>Quadratic equations</strong>
-                <span>Mathematics · Sample entry</span>
-            </div>
-            <span class="activity-tag">Concept gap</span>
-        </div>
-
-        <div class="activity">
-            <div class="activity-icon">⚡</div>
-            <div class="activity-details">
-                <strong>Newton's second law</strong>
-                <span>Physics · Sample entry</span>
-            </div>
-            <span class="activity-tag">Misread question</span>
-        </div>
-
-        <div class="activity">
-            <div class="activity-icon">🧪</div>
-            <div class="activity-details">
-                <strong>Chemical bonding</strong>
-                <span>Chemistry · Sample entry</span>
-            </div>
-            <span class="activity-tag">Formula misuse</span>
-        </div>
-    </section>
+    
 
     <section class="bottom-cta">
         <div>
@@ -533,6 +469,51 @@
     made with curiosity (and a few mistakes) ♡ · mistake museum.
 </footer>
 
-<form th:action="@{/logout}" method="post" style="position:fixed; top:8px; right:12px; z-index:50;"><button type="submit" style="padding:6px 12px; border-radius:10px; border:1px solid #ddd; background:#fff; cursor:pointer; font-size:13px;">Log out</button></form>
+<form th:action="@{/logout}" method="post" style="position:fixed; top:8px; right:12px; z-index:50;">
+    <button type="submit" style="padding:6px 12px; border-radius:10px; border:1px solid #ddd; background:#fff; cursor:pointer; font-size:13px;">Log out</button>
+</form>
+
+<script>
+fetch('/api/profile')
+    .then(function (r) {
+        return r.json();
+    })
+    .then(function (p) {
+        document.getElementById('total').textContent = p.totalMistakes;
+
+        document.getElementById('concept-gaps').textContent =
+            p.countsByLabel.CONCEPT_GAP || 0;
+
+        if (!p.totalMistakes) {
+            document.getElementById('empty-state').style.display = 'block';
+            document.getElementById('empty-state').textContent =
+                p.sentence || 'No mistakes analysed yet. Analyse your first answer!';
+            return;
+        }
+
+        document.getElementById('empty-state').style.display = 'none';
+
+        if (p.topTopic) {
+            document.getElementById('top-topic-name').textContent = p.topTopic;
+            document.getElementById('top-topic').style.display = 'flex';
+        }
+
+        Object.keys(p.countsByLabel).forEach(function (label) {
+            var pct = Math.round(
+                p.countsByLabel[label] * 100 / p.totalMistakes
+            );
+
+            var bar = document.getElementById('bar-' + label);
+            var percentage = document.getElementById('pct-' + label);
+
+            if (bar) bar.style.width = pct + '%';
+            if (percentage) percentage.textContent = pct + '%';
+        });
+    })
+    .catch(function (error) {
+        console.error('Error loading profile:', error);
+    });
+</script>
+
 </body>
 </html>
