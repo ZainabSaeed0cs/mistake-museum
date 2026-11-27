@@ -236,6 +236,9 @@
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
         }
 
         .activity {
@@ -446,7 +449,10 @@
         
             <div id="top-topic" class="topic" style="display:none;">
                 <span id="top-topic-name"></span>
-                <span class="topic-tag">Revisit</span>
+                <button type="button" class="topic-tag"
+                onclick="document.getElementById('history-panel').scrollIntoView({ behavior: 'smooth' });">
+            Revisit
+        </button>
             </div>
         
     </div>
@@ -461,7 +467,20 @@
         <div id="practice-content">
             Loading your practice questions...
         </div>
+    
+</div>
+
+<!-- Answer History -->
+<section class="panel" id="history-panel" style="margin-top:20px;">
+    <h2>Your answer history</h2>
+    <p class="panel-subtitle">
+        Revisit your previous answers and the feedback you received.
+    </p>
+
+    <div id="history-content">
+        Loading your answer history...
     </div>
+</section>
 
  
 <section class="bottom-cta">
@@ -578,6 +597,78 @@ fetch('/api/practice')
         console.error('Error loading practice:', error);
         document.getElementById('practice-content').textContent =
             'Unable to load practice questions right now.';
+    });
+    fetch('/api/mistakes')
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('History request failed');
+        }
+        return response.json();
+    })
+    .then(function(mistakes) {
+        var historyContent = document.getElementById('history-content');
+
+        if (!Array.isArray(mistakes) || mistakes.length === 0) {
+            historyContent.textContent =
+                'No saved answers yet. Your analysed answers will appear here.';
+            return;
+        }
+
+        historyContent.textContent = '';
+
+        mistakes.forEach(function(item, index) {
+            var entry = document.createElement('div');
+            entry.style.padding = '18px 0';
+            entry.style.borderBottom = '1px solid #F1EEF3';
+
+            var heading = document.createElement('h3');
+            heading.textContent =
+                (item.subject || 'Subject') + ' · ' + (item.topic || 'Topic');
+
+            var label = document.createElement('p');
+            label.textContent = 'Mistake type: ' +
+                (item.effectiveLabel || 'Not classified');
+
+            var details = document.createElement('details');
+
+            var summary = document.createElement('summary');
+            summary.textContent = 'View previous answer and feedback';
+
+            details.appendChild(summary);
+
+            function addDetail(title, value) {
+                var paragraph = document.createElement('p');
+                paragraph.style.marginTop = '10px';
+
+                var strong = document.createElement('strong');
+                strong.textContent = title + ': ';
+
+                paragraph.appendChild(strong);
+                paragraph.appendChild(
+                    document.createTextNode(value || 'Not provided')
+                );
+
+                details.appendChild(paragraph);
+            }
+
+            addDetail('Question', item.question);
+            addDetail('Your answer', item.studentAnswer);
+            addDetail('Correct answer', item.correction);
+            addDetail('What went wrong', item.reason);
+            addDetail('Error step', item.errorStep);
+
+            entry.appendChild(heading);
+            entry.appendChild(label);
+            entry.appendChild(details);
+
+            historyContent.appendChild(entry);
+        });
+    })
+    .catch(function(error) {
+        console.error('Error loading answer history:', error);
+
+        document.getElementById('history-content').textContent =
+            'Unable to load your answer history right now.';
     });
 </script>
 

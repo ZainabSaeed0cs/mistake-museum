@@ -47,6 +47,9 @@ public class MistakeController {
             item.put("id", m.getId());
             item.put("subject", m.getSubject());
             item.put("topic", m.getTopic());
+            item.put("question", m.getQuestion());
+            item.put("studentAnswer", m.getStudentAnswer());
+            item.put("correction", m.getCorrection());
             item.put("aiLabel", m.getAiLabel());
             item.put("studentLabel", m.getStudentLabel());
             item.put("effectiveLabel", m.getEffectiveLabel());

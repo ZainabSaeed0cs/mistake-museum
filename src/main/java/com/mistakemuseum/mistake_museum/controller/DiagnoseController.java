@@ -83,7 +83,7 @@ public class DiagnoseController {
                     subject, topic, question, studentAnswer, correction, photo
             );
 
-            Long mistakeId = saveMistake(authentication, request, response, subject, topic, result);
+           Long mistakeId = saveMistake(authentication, request, response, subject, topic, question, studentAnswer, correction, result);
 
             java.util.Map<String, Object> out = new java.util.LinkedHashMap<>();
             out.put("label", result.label() == null ? null : result.label().name());
@@ -106,12 +106,15 @@ public class DiagnoseController {
     }
 
     // A save problem must not hide a good diagnosis from the student
-    private Long saveMistake(Authentication authentication,
-                             HttpServletRequest request,
-                             HttpServletResponse response,
-                             String subject,
-                             String topic,
-                             DiagnosisResult result) {
+private Long saveMistake(Authentication authentication,
+                         HttpServletRequest request,
+                         HttpServletResponse response,
+                         String subject,
+                         String topic,
+                         String question,
+                         String studentAnswer,
+                         String correction,
+                         DiagnosisResult result) {
         try {
             Student student = studentService.getCurrentStudent(authentication, request, response);
 
@@ -119,6 +122,9 @@ public class DiagnoseController {
             mistake.setStudent(student);
             mistake.setSubject(cut(subject, 255));
             mistake.setTopic(cut(topic, 255));
+            mistake.setQuestion(cut(question, 2000));
+mistake.setStudentAnswer(cut(studentAnswer, 5000));
+mistake.setCorrection(cut(correction, 5000));
             mistake.setAiLabel(result.label());
             mistake.setReason(cut(result.reason(), 1000));
             mistake.setConfidence(result.confidence());

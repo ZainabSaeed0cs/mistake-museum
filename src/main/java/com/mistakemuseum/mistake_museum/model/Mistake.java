@@ -17,7 +17,14 @@ public class Mistake {
 
     private String subject;
     private String topic;
+    @Column(length = 2000)
+private String question;
 
+@Column(length = 5000)
+private String studentAnswer;
+
+@Column(length = 5000)
+private String correction;
     // Label chosen by the AI
     @Enumerated(EnumType.STRING)
     private Label aiLabel;
@@ -62,4 +69,12 @@ public class Mistake {
     public String getImagePath() { return imagePath; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
     public Instant getCreatedAt() { return createdAt; }
+    public String getQuestion() { return question; }
+public void setQuestion(String question) { this.question = question; }
+
+public String getStudentAnswer() { return studentAnswer; }
+public void setStudentAnswer(String studentAnswer) { this.studentAnswer = studentAnswer; }
+
+public String getCorrection() { return correction; }
+public void setCorrection(String correction) { this.correction = correction; }
 }
