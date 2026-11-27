@@ -220,8 +220,8 @@
     </p>
 
     <div class="summary">
-        <span th:text="${totalMistakes}">0</span>
-        <p>Answers analysed</p>
+        <span th:text="${totalLibraryItems}">0</span>
+        <p>Library items</p>
     </div>
 
     <input
@@ -235,8 +235,8 @@
 
     <div th:if="${subjectCounts.isEmpty()}" class="empty-state">
         <h2>Your library is waiting!</h2>
-        <p>You haven't analysed any answers yet.</p>
-        <p>Once you analyse an answer, its subject will appear here.</p>
+        <p>You haven't analysed any answers or saved any practice questions yet.</p>
+        <p>Start practising or submit an answer to build your library.</p>
     </div>
 
     <div class="subjects" id="subject-list"

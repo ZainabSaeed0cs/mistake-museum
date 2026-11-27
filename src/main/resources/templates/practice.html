@@ -400,6 +400,9 @@
         </div>
 
         <form id="practiceSettingsForm">
+            <input type="hidden"
+       th:name="${_csrf.parameterName}"
+       th:value="${_csrf.token}">
             <div class="settings-grid">
                 <div class="field">
                     <label for="subjectSelect">Subject</label>
@@ -484,36 +487,239 @@
         button.textContent = isOpen ? "Show Answer" : "Hide Answer";
     }
 
-    (function () {
-        const form = document.getElementById("practiceSettingsForm");
-        const generateAnotherBtn = document.getElementById("generateAnotherBtn");
-        const statusBanner = document.getElementById("practiceStatus");
+   
+(function () {
+    const form = document.getElementById("practiceSettingsForm");
+    const generateBtn = document.getElementById("generateBtn");
+    const generateAnotherBtn = document.getElementById("generateAnotherBtn");
+    const statusBanner = document.getElementById("practiceStatus");
 
-        function showPart1Notice(actionLabel) {
-            const subject = document.getElementById("subjectSelect").value || "All subjects";
-            const topic = document.getElementById("topicSelect").value || "All weak topics";
-            const difficulty = document.getElementById("difficultySelect").value;
-            const count = document.getElementById("questionCountSelect").value;
+    let previousQuestions = [];
 
-            statusBanner.style.display = "block";
-            statusBanner.textContent =
-                actionLabel + " (" + count + " " + difficulty + " question(s) for " +
-                subject + " / " + topic + ") — Gemini question generation will be wired in Part 2.";
+    function showStatus(message, isError) {
+        statusBanner.style.display = "block";
+        statusBanner.textContent = message;
+        statusBanner.style.color = isError ? "#b42318" : "";
+    }
+
+    function renderQuestions(questions) {
+        const section = document.querySelector(
+            '[aria-labelledby="questionsHeading"]'
+        );
+
+        let container = document.getElementById("questionsContainer");
+        const emptyState = document.getElementById("emptyQuestionsState");
+
+        if (!container) {
+            container = document.createElement("div");
+            container.id = "questionsContainer";
+            section.appendChild(container);
         }
 
-        if (form) {
-            form.addEventListener("submit", function (event) {
-                event.preventDefault();
-                showPart1Notice("Practice settings selected");
+        if (emptyState) {
+            emptyState.style.display = "none";
+        }
+
+        container.replaceChildren();
+
+        questions.forEach(function (q) {
+            const card = document.createElement("div");
+            card.className = "question-card";
+
+            const top = document.createElement("div");
+            top.className = "question-top";
+
+            const number = document.createElement("span");
+            number.textContent = "Question " + q.number;
+
+            const subject = document.createElement("span");
+            subject.textContent = q.subjectAndTopic;
+
+            top.append(number, subject);
+
+            const question = document.createElement("div");
+            question.className = "question-text";
+            question.textContent = q.questionText;
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "btn-secondary";
+            button.textContent = "Show Answer";
+
+            const answerBox = document.createElement("div");
+            answerBox.className = "answer-box";
+            answerBox.style.display = "none";
+
+            const answerLine = document.createElement("div");
+            const answerLabel = document.createElement("strong");
+            answerLabel.textContent = "Answer: ";
+            const answerText = document.createElement("span");
+            answerText.textContent = q.answer;
+            answerLine.append(answerLabel, answerText);
+
+            const explanationLine = document.createElement("div");
+            explanationLine.style.marginTop = "6px";
+
+            const explanationLabel = document.createElement("strong");
+            explanationLabel.textContent = "Explanation: ";
+
+            const explanationText = document.createElement("span");
+            explanationText.textContent = q.explanation;
+
+            explanationLine.append(explanationLabel, explanationText);
+            answerBox.append(answerLine, explanationLine);
+
+            button.addEventListener("click", function () {
+                const isOpen = answerBox.style.display === "block";
+                answerBox.style.display = isOpen ? "none" : "block";
+                button.textContent = isOpen ? "Show Answer" : "Hide Answer";
             });
+
+            const saveButton = document.createElement("button");
+saveButton.type = "button";
+saveButton.className = "btn-secondary";
+saveButton.textContent = "☆ Save";
+saveButton.style.marginLeft = "8px";
+
+saveButton.addEventListener("click", async function () {
+    const csrfInput = document.querySelector(
+        '#practiceSettingsForm input[type="hidden"]'
+    );
+
+    if (!csrfInput) {
+        showStatus("Security token missing. Please refresh the page.", true);
+        return;
+    }
+
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+
+    try {
+        const response = await fetch("/api/practice/saved", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfInput.value
+            },
+            body: JSON.stringify({
+                subject: document.getElementById("subjectSelect").value || "General",
+                topic: document.getElementById("topicSelect").value || q.subjectAndTopic || "Mixed practice",
+                difficulty: document.getElementById("difficultySelect").value,
+                questionText: q.questionText,
+                answer: q.answer,
+                explanation: q.explanation
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Could not save this question.");
         }
 
-        if (generateAnotherBtn) {
-            generateAnotherBtn.addEventListener("click", function () {
-                showPart1Notice("New set requested");
-            });
+        const result = await response.json();
+        saveButton.textContent = result.saved ? "✓ Saved" : "☆ Save";
+        showStatus(result.message, false);
+
+    } catch (error) {
+        saveButton.textContent = "☆ Save";
+        showStatus(error.message, true);
+    } finally {
+        saveButton.disabled = false;
+    }
+});
+
+card.append(top, question, button, answerBox, saveButton);
+            container.appendChild(card);
+        });
+    }
+
+    async function generatePractice() {
+        const csrfInput = form.querySelector('input[type="hidden"]');
+
+        if (!csrfInput) {
+            showStatus("Security token missing. Please refresh the page.", true);
+            return;
         }
-    })();
+
+        const subject = document.getElementById("subjectSelect").value;
+        const topic = document.getElementById("topicSelect").value;
+        const difficulty = document.getElementById("difficultySelect").value;
+        const count = Number(
+            document.getElementById("questionCountSelect").value
+        );
+
+        generateBtn.disabled = true;
+        generateAnotherBtn.disabled = true;
+
+        showStatus("Generating your practice questions. Please wait...", false);
+
+        try {
+            const response = await fetch("/api/practice/generate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-CSRF-TOKEN": csrfInput.value
+                },
+                body: JSON.stringify({
+                    subject: subject,
+                    topic: topic,
+                    difficulty: difficulty,
+                    count: count,
+                    previousQuestions: previousQuestions
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(
+                    errorText || "Question generation failed. Please try again."
+                );
+            }
+
+            const questions = await response.json();
+
+            if (!Array.isArray(questions) || questions.length === 0) {
+                throw new Error("No questions were generated. Please try again.");
+            }
+
+            previousQuestions = previousQuestions.concat(
+                questions.map(function (q) {
+                    return q.questionText;
+                })
+            );
+
+            renderQuestions(questions);
+
+            showStatus(
+                questions.length + " practice questions generated successfully!",
+                false
+            );
+
+        } catch (error) {
+            console.error("Practice generation error:", error);
+            showStatus(error.message, true);
+
+        } finally {
+            generateBtn.disabled = false;
+            generateAnotherBtn.disabled = false;
+        }
+    }
+
+    if (form) {
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            previousQuestions = [];
+            generatePractice();
+        });
+    }
+
+    if (generateAnotherBtn) {
+        generateAnotherBtn.addEventListener("click", function () {
+            generatePractice();
+        });
+    }
+})();
+
 </script>
 </body>
 </html>

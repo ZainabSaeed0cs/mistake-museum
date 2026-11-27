@@ -9,7 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             background: #F7F3EA;
@@ -33,9 +37,14 @@
             color: #25232B;
         }
 
-        .logo span { color: #9A82DF; }
+        .logo span {
+            color: #9A82DF;
+        }
 
-        .nav-links { display: flex; gap: 25px; }
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
 
         .nav-links a {
             text-decoration: none;
@@ -122,6 +131,42 @@
             font-weight: 700;
         }
 
+        .saved-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 4px 9px;
+            background: #F1ECFA;
+            color: #826BB8;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .saved-answer {
+            margin-top: 15px;
+            padding: 14px;
+            background: #FAF8FD;
+            border-radius: 10px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .unsave-button {
+            margin-top: 15px;
+            padding: 9px 14px;
+            border: 1px solid #e8e2d7;
+            border-radius: 9px;
+            background: white;
+            color: #826BB8;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .unsave-button:hover {
+            background: #F1ECFA;
+        }
+
         .empty-state {
             background: white;
             border: 1px solid #eee9e1;
@@ -146,8 +191,13 @@
         }
 
         @media (max-width: 500px) {
-            .navbar { padding: 18px 5%; }
-            .nav-links { gap: 12px; }
+            .navbar {
+                padding: 18px 5%;
+            }
+
+            .nav-links {
+                gap: 12px;
+            }
         }
     </style>
 </head>
@@ -172,16 +222,72 @@
     <h1 th:text="${subject}">Mathematics</h1>
 
     <p class="subtitle">
-        Revisit the answers you've previously analysed in this subject.
+        Revisit your analysed answers and saved practice questions in this subject.
     </p>
 
-    <div th:if="${mistakes.isEmpty()}" class="empty-state">
+    <div th:if="${mistakes.isEmpty() and savedQuestions.isEmpty()}"
+         class="empty-state">
+
         <h2>No saved answers found</h2>
-        <p>There are currently no saved answers for this subject.</p>
+        <p>There are currently no answers or saved questions for this subject.</p>
     </div>
 
-    <div class="mistake-list" th:unless="${mistakes.isEmpty()}">
+    <div class="mistake-list"
+         th:if="${!mistakes.isEmpty() or !savedQuestions.isEmpty()}">
 
+        <!-- Saved practice questions -->
+        <div class="mistake-card" th:each="saved : ${savedQuestions}">
+
+            <div class="mistake-topic">
+                <span th:text="${saved.topic != null ? saved.topic : 'General topic'}">
+                    Algebra
+                </span>
+
+                <span class="saved-badge">Saved</span>
+            </div>
+
+            <div class="mistake-question"
+                 th:text="${saved.questionText}">
+                Example practice question
+            </div>
+
+            <div class="saved-answer">
+
+                <div>
+                    <strong>Difficulty:</strong>
+                    <span th:text="${saved.difficulty != null ? saved.difficulty : 'Not specified'}">
+                        Medium
+                    </span>
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <strong>Answer:</strong>
+                    <span th:text="${saved.answer != null ? saved.answer : 'Not available'}">
+                        Example answer
+                    </span>
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <strong>Explanation:</strong>
+                    <span th:text="${saved.explanation != null ? saved.explanation : 'Not available'}">
+                        Example explanation
+                    </span>
+                </div>
+
+            </div>
+
+            <form th:action="@{/history/saved/{id}/delete(id=${saved.id})}"
+                  method="post">
+
+                <button type="submit" class="unsave-button">
+                    Remove from Saved
+                </button>
+
+            </form>
+
+        </div>
+
+        <!-- Previously analysed mistakes -->
         <div class="mistake-card" th:each="mistake : ${mistakes}">
 
             <div class="mistake-topic"
@@ -212,7 +318,9 @@
 
 </main>
 
-<footer>made with curiosity (and a few mistakes) ♡ · mistake museum.</footer>
+<footer>
+    made with curiosity (and a few mistakes) ♡ · mistake museum.
+</footer>
 
 </body>
 </html>
