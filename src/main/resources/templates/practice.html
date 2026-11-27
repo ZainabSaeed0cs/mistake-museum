@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Room | Mistake Museum</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #F7F3EA;
+            color: #25232B;
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            border-bottom: 1px solid #e8e1d5;
+            background: rgba(247, 243, 234, 0.92);
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 23px;
+            font-weight: 700;
+            color: #25232B;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #55515d;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #8d75d2;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-pill {
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 1px solid #ded9e2;
+            background: #fff;
+            color: #23212b;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        main {
+            max-width: 920px;
+            margin: 52px auto 80px;
+            padding: 0 22px;
+        }
+
+        .eyebrow {
+            color: #8d75d2;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(34px, 5vw, 48px);
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: #6f6a77;
+            font-size: 16px;
+            line-height: 1.65;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #ebe4f5;
+            border-radius: 22px;
+            padding: 28px;
+            box-shadow: 0 12px 36px rgba(37, 35, 43, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .card-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+        }
+
+        .lavender-note {
+            background: #f5f0ff;
+            border: 1px solid #e3d8fa;
+            color: #5c4894;
+            border-radius: 16px;
+            padding: 18px 20px;
+            line-height: 1.65;
+            font-size: 14px;
+        }
+
+        .lavender-note a {
+            color: #6b52b5;
+            font-weight: 700;
+        }
+
+        .weak-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .weak-chip-card {
+            background: #faf7ff;
+            border: 1px solid #e5daf9;
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .weak-topic {
+            font-weight: 700;
+            font-size: 15px;
+            color: #25232B;
+            margin-bottom: 6px;
+        }
+
+        .weak-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .pill-lavender {
+            background: #ede4ff;
+            color: #5e479c;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .pill-mint {
+            background: #e9f6ee;
+            color: #3d6f50;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .summary-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .pill-peach {
+            background: #fff3e6;
+            color: #8c5828;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #25232B;
+        }
+
+        select {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #ded7ea;
+            border-radius: 12px;
+            background: #fcfbff;
+            color: #25232B;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #9c82e3;
+            box-shadow: 0 0 0 3px rgba(156, 130, 227, 0.18);
+        }
+
+        .actions-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: #25232B;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 22px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: #51476a;
+        }
+
+        .btn-secondary {
+            background: #f0eaff;
+            color: #5d4799;
+            border: 1px solid #d7c7fa;
+            border-radius: 12px;
+            padding: 13px 18px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: #e5dafc;
+        }
+
+        .status-banner {
+            display: none;
+            margin-top: 16px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: #f5f0ff;
+            border: 1px solid #dfd3fa;
+            color: #57438e;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .empty-questions {
+            background: #faf8ff;
+            border: 1px dashed #d5c6f5;
+            border-radius: 16px;
+            padding: 28px 20px;
+            text-align: center;
+            color: #6b6575;
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        .question-card {
+            background: #faf8ff;
+            border: 1px solid #e6dcf8;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 14px;
+        }
+
+        .question-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #6b52b5;
+        }
+
+        .question-text {
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .answer-box {
+            display: none;
+            margin-top: 12px;
+            padding: 14px;
+            border-radius: 12px;
+            background: #e9f6ee;
+            color: #2f593f;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 680px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            header {
+                padding: 18px 20px;
+            }
+            main {
+                margin-top: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <a class="logo" href="/">mistake museum.</a>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/upload">Analyze Mistake</a>
+        <a href="/dashboard">Answer History</a>
+        <a href="/practice" class="active">Practice Room</a>
+    </nav>
+    <div class="nav-actions">
+        <a class="nav-pill" href="/dashboard">Dashboard</a>
+        <form th:action="@{/logout}" method="post">
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit" class="nav-pill">Log out</button>
+        </form>
+    </div>
+</header>
+
+<main>
+    <div class="eyebrow">Targeted Practice · Part 1</div>
+    <h1>Practice Room</h1>
+    <p class="subtitle">Practice the topics you struggle with. Every mistake is a chance to improve.</p>
+
+    <section class="card" aria-labelledby="weakAreasHeading">
+        <div class="card-header">
+            <h2 id="weakAreasHeading">Weak Areas</h2>
+            <span class="pill-lavender" th:if="${hasWeakAreas}" th:text="${#lists.size(weakAreas)} + ' focus topic(s)'">Focus topics</span>
+        </div>
+
+        <div class="lavender-note" th:if="${!hasWeakAreas}">
+            No weak topics found yet. Start by analyzing your first question on the
+            <a href="/upload">Analyze Mistake</a> page, and your practice topics will appear here automatically.
+        </div>
+
+        <div th:if="${hasWeakAreas}">
+            <div class="weak-grid">
+                <div class="weak-chip-card" th:each="area : ${weakAreas}">
+                    <div class="weak-topic" th:text="${area.topic}">Topic</div>
+                    <div class="weak-meta">
+                        <span class="pill-lavender" th:text="${area.count} + ' mistake(s)'">1 mistake</span>
+                        <span class="pill-mint" th:text="${area.highlight}">Concept Gap</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-row" th:if="${!#lists.isEmpty(mistakeTypeCounts)}">
+                <span class="pill-peach" th:each="typeEntry : ${mistakeTypeCounts}"
+                      th:text="${typeEntry.key} + ' (' + ${typeEntry.value} + ')'">
+                    Concept Gap (1)
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <section class="card" aria-labelledby="settingsHeading">
+        <div class="card-header">
+            <h2 id="settingsHeading">Practice Settings</h2>
+        </div>
+
+        <form id="practiceSettingsForm">
+            <div class="settings-grid">
+                <div class="field">
+                    <label for="subjectSelect">Subject</label>
+                    <select id="subjectSelect" name="subject">
+                        <option value="">All subjects</option>
+                        <option th:each="subj : ${subjects}" th:value="${subj}" th:text="${subj}">Subject</option>
+                        <option th:if="${#lists.isEmpty(subjects)}" value="Mathematics">Mathematics</option>
+                        <option th:if="${#lists.isEmpty(subjects)}" value="Physics">Physics</option>
+                        <option th:if="${#lists.isEmpty(subjects)}" value="Chemistry">Chemistry</option>
+                        <option th:if="${#lists.isEmpty(subjects)}" value="English">English</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="topicSelect">Topic</label>
+                    <select id="topicSelect" name="topic">
+                        <option value="">All weak topics</option>
+                        <option th:each="top : ${topics}" th:value="${top}" th:text="${top}">Topic</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="difficultySelect">Difficulty</label>
+                    <select id="difficultySelect" name="difficulty">
+                        <option value="Easy">Easy</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="questionCountSelect">Number of questions</label>
+                    <select id="questionCountSelect" name="count">
+                        <option value="5" selected>5</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="actions-row">
+                <button type="submit" class="btn-primary" id="generateBtn">Generate Practice</button>
+                <button type="button" class="btn-secondary" id="generateAnotherBtn">Generate Another Set</button>
+            </div>
+
+            <div id="practiceStatus" class="status-banner" role="status" aria-live="polite"></div>
+        </form>
+    </section>
+
+    <section class="card" aria-labelledby="questionsHeading">
+        <div class="card-header">
+            <h2 id="questionsHeading">Practice Questions</h2>
+        </div>
+
+        <div id="emptyQuestionsState" class="empty-questions" th:if="${#lists.isEmpty(questions)}">
+            Practice Room setup is ready for Part 2. Choose your subject, topic, difficulty, and question count above,
+            then click <strong>Generate Practice</strong> when question generation is connected.
+        </div>
+
+        <div id="questionsContainer" th:if="${!#lists.isEmpty(questions)}">
+            <div class="question-card" th:each="q : ${questions}">
+                <div class="question-top">
+                    <span th:text="'Question ' + ${q.number}">Question 1</span>
+                    <span th:text="${q.subjectAndTopic}">Subject · Topic</span>
+                </div>
+                <div class="question-text" th:text="${q.questionText}">Question text</div>
+                <button type="button" class="btn-secondary" onclick="toggleAnswer(this)">Show Answer</button>
+                <div class="answer-box">
+                    <div><strong>Answer:</strong> <span th:text="${q.answer}">Answer</span></div>
+                    <div style="margin-top: 6px;"><strong>Explanation:</strong> <span th:text="${q.explanation}">Explanation</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    function toggleAnswer(button) {
+        const box = button.nextElementSibling;
+        if (!box) return;
+        const isOpen = box.style.display === "block";
+        box.style.display = isOpen ? "none" : "block";
+        button.textContent = isOpen ? "Show Answer" : "Hide Answer";
+    }
+
+    (function () {
+        const form = document.getElementById("practiceSettingsForm");
+        const generateAnotherBtn = document.getElementById("generateAnotherBtn");
+        const statusBanner = document.getElementById("practiceStatus");
+
+        function showPart1Notice(actionLabel) {
+            const subject = document.getElementById("subjectSelect").value || "All subjects";
+            const topic = document.getElementById("topicSelect").value || "All weak topics";
+            const difficulty = document.getElementById("difficultySelect").value;
+            const count = document.getElementById("questionCountSelect").value;
+
+            statusBanner.style.display = "block";
+            statusBanner.textContent =
+                actionLabel + " (" + count + " " + difficulty + " question(s) for " +
+                subject + " / " + topic + ") — Gemini question generation will be wired in Part 2.";
+        }
+
+        if (form) {
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+                showPart1Notice("Practice settings selected");
+            });
+        }
+
+        if (generateAnotherBtn) {
+            generateAnotherBtn.addEventListener("click", function () {
+                showPart1Notice("New set requested");
+            });
+        }
+    })();
+</script>
+</body>
+</html>
