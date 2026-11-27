@@ -701,8 +701,22 @@ footer {
         <a href="#about">About</a>
     </div>
 
-    <a href="/login" class="nav-cta">Log in</a>
-</nav>
+    <div style="display:flex; align-items:center; gap:12px;">
+
+        <a th:if="${isLoggedIn}"
+           href="/dashboard"
+           class="nav-cta">
+            Dashboard
+        </a>
+    
+        <a th:unless="${isLoggedIn}"
+           href="/login"
+           class="nav-cta">
+            Log in
+        </a>
+    
+    </div>
+    </nav>
 
 <main>
 

@@ -371,17 +371,25 @@
 </head>
 
 <body>
-<header>
-    <a class="logo" href="/">mistake museum.</a>
-    <nav>
-        
-            <a href="/">Home</a>
+    <header>
+        <a class="logo" href="/dashboard">mistake museum.</a>
+    
+        <nav>
+            <a href="/dashboard">Home</a>
             <a href="/upload">Analyze Mistake</a>
-            <a href="/dashboard">Answer History</a>
+            <a href="/history">Answer Library</a>
             <a href="/practice">Practice Room</a>
-        
-    </nav>
-</header>
+    
+            <form th:action="@{/logout}" method="post" style="display:inline; margin-left:20px;">
+                <button type="submit"
+                        style="border:none; background:none; color:#55515d;
+                               font-family:inherit; font-size:14px; font-weight:600;
+                               cursor:pointer;">
+                    Log out
+                </button>
+            </form>
+        </nav>
+    </header>
 
 <main>
     <div class="eyebrow">Your learning journey starts here ✳</div>
@@ -840,10 +848,7 @@ if (window.setupCorrection) { window.setupCorrection(result); }
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
 </script>
-<a href="/dashboard" style="position:fixed; top:12px; right:110px; z-index:50; padding:8px 14px; border-radius:10px; border:1px solid #ddd; background:#fff; color:#23212b; text-decoration:none;">Dashboard</a>
-<form th:action="@{/logout}" method="post" style="position:fixed; top:12px; right:12px; z-index:50;">
-  <button type="submit" style="padding:8px 14px; border-radius:10px; border:1px solid #ddd; background:#fff; cursor:pointer;">Log out</button>
-</form>
+
 <script>
 (function () {
   var currentId = null;
