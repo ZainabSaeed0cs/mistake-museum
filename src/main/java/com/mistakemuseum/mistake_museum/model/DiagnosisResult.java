@@ -1,4 +1,3 @@
-
 package com.mistakemuseum.mistake_museum.model;
 
 public record DiagnosisResult(
@@ -6,6 +5,9 @@ public record DiagnosisResult(
         String reason,
         String topic,
         double confidence,
-        String errorStep
+        String errorStep,
+        String extractedQuestion,
+        String extractedStudentAnswer,
+        String extractedCorrection
 ) {
 }

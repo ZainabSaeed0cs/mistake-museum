@@ -119,12 +119,20 @@ private Long saveMistake(Authentication authentication,
             Student student = studentService.getCurrentStudent(authentication, request, response);
 
             Mistake mistake = new Mistake();
+            log.info("Controller extracted question: {}", result.extractedQuestion());
+log.info("Controller extracted answer: {}", result.extractedStudentAnswer());
+log.info("Controller extracted correction: {}", result.extractedCorrection());
             mistake.setStudent(student);
             mistake.setSubject(cut(subject, 255));
             mistake.setTopic(cut(topic, 255));
-            mistake.setQuestion(cut(question, 2000));
-mistake.setStudentAnswer(cut(studentAnswer, 5000));
-mistake.setCorrection(cut(correction, 5000));
+            mistake.setQuestion(cut(
+                hasText(question) ? question : result.extractedQuestion(), 2000));
+
+            mistake.setStudentAnswer(cut(
+                hasText(studentAnswer) ? studentAnswer : result.extractedStudentAnswer(), 5000));
+
+            mistake.setCorrection(cut(
+               hasText(correction) ? correction : result.extractedCorrection(), 5000));
             mistake.setAiLabel(result.label());
             mistake.setReason(cut(result.reason(), 1000));
             mistake.setConfidence(result.confidence());
@@ -143,4 +151,8 @@ mistake.setCorrection(cut(correction, 5000));
         }
         return s.length() <= max ? s : s.substring(0, max);
     }
+     private static boolean hasText(String s) {
+        return s != null && !s.isBlank();
+    }
+
 }

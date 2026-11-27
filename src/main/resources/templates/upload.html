@@ -70,6 +70,22 @@
             line-height: 1.7;
             margin-bottom: 35px;
         }
+.privacy-notice {
+    background: #f0eaff;
+    border: 1px solid #ded2fa;
+    border-radius: 12px;
+    padding: 15px 18px;
+    margin-bottom: 22px;
+    color: #554878;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.privacy-notice strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #49386f;
+}
 
         .form-card, .result-card {
             background: white;
@@ -371,6 +387,15 @@
         Every mistake has something to teach us — let's figure out what happened.
     </p>
 
+    <div class="privacy-notice">
+        <strong>✳ A quick note about AI feedback</strong>
+        <p>
+            Your questions, answers, and uploaded photos may be sent to
+            Google's Gemini AI service for analysis. AI-generated feedback
+            may not always be accurate, so please review the explanations
+            carefully. Avoid submitting personal or sensitive information.
+        </p>
+    </div>
     <div class="form-card">
         <form id="mistakeForm">
             <input type="hidden" th:if="${_csrf != null}"
@@ -401,7 +426,6 @@
                     </label>
                 </div>
             </div>
-
             <div class="field">
                 <label for="topic">02 — What topic are you studying?</label>
                 <input type="text" id="topic" placeholder="e.g. Quadratic Equations" required>
@@ -470,7 +494,6 @@
 
         <div id="message"></div>
     </div>
-
     <div class="result-card" id="resultCard">
         <div class="result-eyebrow">✳ Your mistake report</div>
         <h2>Here's what we found.</h2>
@@ -538,7 +561,13 @@
         typePanel.classList.add("active");
         photoPanel.classList.remove("active");
     });
+    document.getElementById("question").addEventListener("input", () => {
+    document.getElementById("correction").value = "";
+});
 
+document.getElementById("studentAnswer").addEventListener("input", () => {
+    document.getElementById("correction").value = "";
+});
     const photoInput = document.getElementById("photo");
     const fileName = document.getElementById("fileName");
 
@@ -715,13 +744,6 @@
         if (isTyping) {
             const question = document.getElementById("question").value.trim();
             const answer = document.getElementById("studentAnswer").value.trim();
-            document.getElementById("question").addEventListener("input", () => {
-    document.getElementById("correction").value = "";
-});
-
-document.getElementById("studentAnswer").addEventListener("input", () => {
-    document.getElementById("correction").value = "";
-});
             const correction = document.getElementById("correction").value.trim();
             console.log("Correction being submitted:", correction);
             if (!question || !answer) {

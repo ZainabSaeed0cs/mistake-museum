@@ -20,11 +20,14 @@ public class StubDiagnosisService implements DiagnosisService {
             MultipartFile photo
     ) {
         return new DiagnosisResult(
-                Label.MISREAD_QUESTION,
-                "You did not convert units first.",
-                topic,
-                0.8,
-                "Step 1"
-        );
+        Label.MISREAD_QUESTION,
+        "You did not convert units first.",
+        topic,
+        0.8,
+        "Step 1",
+        question,
+        studentAnswer,
+        correction
+);
     }
 }

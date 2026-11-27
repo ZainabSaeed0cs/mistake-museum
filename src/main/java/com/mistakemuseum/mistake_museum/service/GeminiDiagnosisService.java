@@ -60,13 +60,27 @@ String photoNote = (photo != null && !photo.isEmpty())
         : "";
 
 String prompt = """
-        You are a careful %s teacher. A student answered a question.
-        First decide whether the student's answer is actually correct. An answer that is correct, even if worded differently, is NOT a mistake.
-        If it is correct, set "label" to NONE and do not invent a mistake.
-        Otherwise classify the PRIMARY cause of the mistake as exactly one of:
-        CARELESS_SLIP (knew it, small slip), CONCEPT_GAP (does not understand the idea),
-        FORMULA_MISUSE (wrong or misapplied formula), INCOMPLETE_ANSWER (stopped early or missed parts),
-        MISREAD_QUESTION (misread or ignored information, units or what was asked).
+        You are a careful %s teacher analyzing a student's work.
+
+        Your task is to identify the question, the student's answer, their working,
+        and the correct answer. Use the uploaded image to read these details when available.
+
+        IMPORTANT EXTRACTION RULES:
+        - If the question is typed below, use it as the question.
+        - If the student answer is typed below, use it as the student's answer.
+        - If the correction is typed below, use it as the correct answer.
+        - If any of these are missing and an image is attached, read the missing information from the image.
+        - Do not return "Not provided" unless the information truly cannot be found.
+        - If the image contains multiple questions, focus on the question relevant to the student's answer.
+        - Keep extracted text readable and preserve mathematical expressions.
+
+        First decide whether the student's answer is actually correct.
+        A correct answer, even if worded differently, is NOT a mistake.
+        If correct, set label to NONE.
+
+        Otherwise classify the PRIMARY cause as exactly one of:
+        CARELESS_SLIP, CONCEPT_GAP, FORMULA_MISUSE,
+        INCOMPLETE_ANSWER, MISREAD_QUESTION.
 
         Question: %s
         Student's answer: %s
@@ -75,20 +89,23 @@ String prompt = """
         %s
 
         Reply with JSON only, with these keys:
-        "label" (one of the five labels above, or NONE if the answer is correct),
-        "reason" (one or two simple sentences addressed to the student; if the answer is correct, say why it is correct),
-        "errorStep" (the step or line where it went wrong, or an empty string if correct),
-        "topic" (short topic name),
-        "confidence" (a number from 0 to 1).
-        CONFIDENCE SCORING RULES:
-        - Confidence must reflect certainty in the selected classification, not just certainty that the answer is wrong.
-        - Use high confidence only when the student's mistake clearly supports the selected label.
-        - Use moderate confidence when the classification is plausible but not certain.
-        - Use 0.7 or lower when the question is ambiguous, writing is unclear,
-          no correct answer was provided, or two labels fit.
-        - Do not automatically use 0.90 or 0.95.
-        - Choose a score that reflects the evidence in this specific response.
-        """.formatted(nz(subject), nz(question), nz(studentAnswer), correctionText, nz(topic), photoNote);
+        "label": one of the five labels above, or NONE if correct,
+        "reason": one or two simple sentences addressed to the student,
+        "errorStep": the step where it went wrong, or empty if correct,
+        "topic": short topic name,
+        "confidence": number from 0 to 1,
+        "extractedQuestion": question text,
+        "extractedStudentAnswer": answer and working,
+        "extractedCorrection": correct answer.
+
+        If information is unavailable, use an empty string for extracted fields.
+        Do not use "Not provided" in extracted fields.
+
+        Confidence must reflect certainty in the classification.
+        Use 0.7 or lower if writing is unclear, the question is ambiguous,
+        or multiple labels could fit.
+        """.formatted(nz(subject), nz(question), nz(studentAnswer),
+        correctionText, nz(topic), photoNote);
 
         List<Object> parts = new ArrayList<>();
         parts.add(Map.of("text", prompt));
@@ -119,16 +136,26 @@ String prompt = """
 
             String text = extractText(response);
             Map<String, Object> json = JsonParserFactory.getJsonParser().parseMap(text);
-
+            log.info("Gemini extracted question: {}", json.get("extractedQuestion"));
+log.info("Gemini extracted answer: {}", json.get("extractedStudentAnswer"));
+log.info("Gemini extracted correction: {}", json.get("extractedCorrection"));
             String labelText = String.valueOf(json.get("label")).trim().toUpperCase();
             Label label = labelText.equals("NONE") ? null : Label.valueOf(labelText);
             String reason = String.valueOf(json.getOrDefault("reason", ""));
             String errorStep = String.valueOf(json.getOrDefault("errorStep", ""));
+            String extractedQuestion = String.valueOf(
+                json.getOrDefault("extractedQuestion", ""));
+
+            String extractedStudentAnswer = String.valueOf(
+                json.getOrDefault("extractedStudentAnswer", ""));
+
+            String extractedCorrection = String.valueOf(
+                 json.getOrDefault("extractedCorrection", ""));
             String outTopic = json.get("topic") == null ? nz(topic) : String.valueOf(json.get("topic"));
             double confidence = json.get("confidence") instanceof Number n ? n.doubleValue() : 0.5;
             confidence = Math.max(0.0, Math.min(1.0, confidence));
 
-            return new DiagnosisResult(label, reason, outTopic, confidence, errorStep);
+           return new DiagnosisResult(label, reason, outTopic, confidence, errorStep, extractedQuestion, extractedStudentAnswer, extractedCorrection);
 
         } catch (RestClientResponseException e) {
             int status = e.getStatusCode().value();
