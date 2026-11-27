@@ -39,3 +39,6 @@ data/
 
 uploads/
 samples/
+
+*.log
+run.log
