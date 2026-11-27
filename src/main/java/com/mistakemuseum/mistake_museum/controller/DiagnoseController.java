@@ -57,12 +57,11 @@ public class DiagnoseController {
 
         boolean hasPhoto = photo != null && !photo.isEmpty();
         boolean hasTypedAnswer = question != null && !question.isBlank()
-                && studentAnswer != null && !studentAnswer.isBlank()
-                && correction != null && !correction.isBlank();
+        && studentAnswer != null && !studentAnswer.isBlank();
 
         if (!hasPhoto && !hasTypedAnswer) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Please upload a photo or fill in all three answer fields."));
+                    .body(Map.of("error", "Please upload a photo or fill in the question and your answer."));
         }
 
         if (hasPhoto) {

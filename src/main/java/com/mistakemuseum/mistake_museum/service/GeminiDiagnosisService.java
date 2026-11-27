@@ -52,26 +52,43 @@ public class GeminiDiagnosisService implements DiagnosisService {
         if (model == null || model.isBlank()) {
             model = "gemini-flash-latest";
         }
+String correctionText = (correction == null || correction.isBlank())
+        ? "Not provided. Work out the correct answer yourself, and say so in your reason if the question is unclear."
+        : correction;
+String photoNote = (photo != null && !photo.isEmpty())
+        ? "A photo of the student's work is attached. Read the question and the student's working from the photo."
+        : "";
 
-        String prompt = """
-                You are a careful %s teacher. A student got a question wrong.
-                Classify the PRIMARY cause of the mistake as exactly one of:
-                CARELESS_SLIP (knew it, small slip), CONCEPT_GAP (does not understand the idea),
-                FORMULA_MISUSE (wrong or misapplied formula), INCOMPLETE_ANSWER (stopped early or missed parts),
-                MISREAD_QUESTION (misread or ignored information, units or what was asked).
+String prompt = """
+        You are a careful %s teacher. A student answered a question.
+        First decide whether the student's answer is actually correct. An answer that is correct, even if worded differently, is NOT a mistake.
+        If it is correct, set "label" to NONE and do not invent a mistake.
+        Otherwise classify the PRIMARY cause of the mistake as exactly one of:
+        CARELESS_SLIP (knew it, small slip), CONCEPT_GAP (does not understand the idea),
+        FORMULA_MISUSE (wrong or misapplied formula), INCOMPLETE_ANSWER (stopped early or missed parts),
+        MISREAD_QUESTION (misread or ignored information, units or what was asked).
 
-                Question: %s
-                Student's answer: %s
-                Correct answer: %s
-                Topic hint: %s
+        Question: %s
+        Student's answer: %s
+        Correct answer: %s
+        Topic hint: %s
+        %s
 
-                Reply with JSON only, with these keys:
-                "label" (one of the five labels above),
-                "reason" (one or two simple sentences addressed to the student),
-                "errorStep" (the step or line where it went wrong),
-                "topic" (short topic name),
-                "confidence" (a number from 0 to 1).
-                """.formatted(nz(subject), nz(question), nz(studentAnswer), nz(correction), nz(topic));
+        Reply with JSON only, with these keys:
+        "label" (one of the five labels above, or NONE if the answer is correct),
+        "reason" (one or two simple sentences addressed to the student; if the answer is correct, say why it is correct),
+        "errorStep" (the step or line where it went wrong, or an empty string if correct),
+        "topic" (short topic name),
+        "confidence" (a number from 0 to 1).
+        CONFIDENCE SCORING RULES:
+        - Confidence must reflect certainty in the selected classification, not just certainty that the answer is wrong.
+        - Use high confidence only when the student's mistake clearly supports the selected label.
+        - Use moderate confidence when the classification is plausible but not certain.
+        - Use 0.7 or lower when the question is ambiguous, writing is unclear,
+          no correct answer was provided, or two labels fit.
+        - Do not automatically use 0.90 or 0.95.
+        - Choose a score that reflects the evidence in this specific response.
+        """.formatted(nz(subject), nz(question), nz(studentAnswer), correctionText, nz(topic), photoNote);
 
         List<Object> parts = new ArrayList<>();
         parts.add(Map.of("text", prompt));
@@ -103,7 +120,8 @@ public class GeminiDiagnosisService implements DiagnosisService {
             String text = extractText(response);
             Map<String, Object> json = JsonParserFactory.getJsonParser().parseMap(text);
 
-            Label label = Label.valueOf(String.valueOf(json.get("label")).trim().toUpperCase());
+            String labelText = String.valueOf(json.get("label")).trim().toUpperCase();
+            Label label = labelText.equals("NONE") ? null : Label.valueOf(labelText);
             String reason = String.valueOf(json.getOrDefault("reason", ""));
             String errorStep = String.valueOf(json.getOrDefault("errorStep", ""));
             String outTopic = json.get("topic") == null ? nz(topic) : String.valueOf(json.get("topic"));

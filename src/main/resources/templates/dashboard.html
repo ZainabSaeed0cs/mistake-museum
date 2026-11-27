@@ -448,13 +448,24 @@
                 <span id="top-topic-name"></span>
                 <span class="topic-tag">Revisit</span>
             </div>
-        </div>
         
-        </section>
+    </div>
+</section>
 
-    
+    <div class="panel" id="practice-panel">
+        <h2>Practice your weak areas</h2>
+        <p class="panel-subtitle">
+            Questions selected based on your mistake patterns
+        </p>
 
-    <section class="bottom-cta">
+        <div id="practice-content">
+            Loading your practice questions...
+        </div>
+    </div>
+
+ 
+<section class="bottom-cta">
+
         <div>
             <h2>Ready to turn another mistake into progress?</h2>
             <p>Submit an answer and discover what you can learn from it.</p>
@@ -512,6 +523,61 @@ fetch('/api/profile')
     })
     .catch(function (error) {
         console.error('Error loading profile:', error);
+    });
+
+fetch('/api/practice')
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('Practice request failed');
+        }
+        return response.json();
+    })
+    .then(function(questions) {
+        var practiceContent = document.getElementById('practice-content');
+
+        if (!Array.isArray(questions) || questions.length === 0) {
+            practiceContent.textContent =
+                'Analyse an answer first to unlock personalised practice.';
+            return;
+        }
+
+        practiceContent.textContent = '';
+
+        questions.forEach(function(item, index) {
+            var question = document.createElement('div');
+            question.className = 'practice-question';
+
+            var heading = document.createElement('h3');
+            heading.textContent = 'Question ' + (index + 1);
+
+            var prompt = document.createElement('p');
+            prompt.textContent = item.question;
+
+            var button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = 'Show answer';
+
+            var answer = document.createElement('p');
+            answer.style.display = 'none';
+
+            button.addEventListener('click', function() {
+                answer.textContent = item.answer;
+                answer.style.display = 'block';
+                button.style.display = 'none';
+            });
+
+            question.appendChild(heading);
+            question.appendChild(prompt);
+            question.appendChild(button);
+            question.appendChild(answer);
+
+            practiceContent.appendChild(question);
+        });
+    })
+    .catch(function(error) {
+        console.error('Error loading practice:', error);
+        document.getElementById('practice-content').textContent =
+            'Unable to load practice questions right now.';
     });
 </script>
 

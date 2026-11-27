@@ -452,7 +452,8 @@
                     </div>
 
                     <div class="field">
-                        <label for="correction">The correct answer</label>
+                    
+                        <label for="correction">The correct answer (optional)</label>
                         <textarea id="correction" placeholder="Write or dictate the correct answer..."></textarea>
                         <button type="button" class="tab voice-btn" data-target="correction">🎙 Dictate correction</button>
                     </div>
@@ -714,12 +715,20 @@
         if (isTyping) {
             const question = document.getElementById("question").value.trim();
             const answer = document.getElementById("studentAnswer").value.trim();
-            const correction = document.getElementById("correction").value.trim();
+            document.getElementById("question").addEventListener("input", () => {
+    document.getElementById("correction").value = "";
+});
 
-            if (!question || !answer || !correction) {
-                alert("Please fill in the topic, question, your answer and correct answer.");
-                return;
-            }
+document.getElementById("studentAnswer").addEventListener("input", () => {
+    document.getElementById("correction").value = "";
+});
+            const correction = document.getElementById("correction").value.trim();
+            console.log("Correction being submitted:", correction);
+            if (!question || !answer) {
+    alert("Please fill in the question and your answer.");
+    return;
+}
+
 
             formData.append("question", question);
             formData.append("studentAnswer", answer);
