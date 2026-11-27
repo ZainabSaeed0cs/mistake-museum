@@ -385,10 +385,9 @@
                     </div>
                 </div>
             </div>
-
             <div class="summary-row" th:if="${!#lists.isEmpty(mistakeTypeCounts)}">
                 <span class="pill-peach" th:each="typeEntry : ${mistakeTypeCounts}"
-                      th:text="${typeEntry.key} + ' (' + ${typeEntry.value} + ')'">
+                      th:text="${typeEntry.label + ' (' + typeEntry.count + ')'}">
                     Concept Gap (1)
                 </span>
             </div>
