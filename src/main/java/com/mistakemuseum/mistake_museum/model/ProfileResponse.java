@@ -8,5 +8,7 @@ public record ProfileResponse(
         String topLabel,
         String topTopic,
         String sentence,
-        Map<String, Integer> weeklyTrend) {
+        Map<String, Integer> weeklyTrend,
+        Map<String, Integer> subjectCounts
+) {
 }

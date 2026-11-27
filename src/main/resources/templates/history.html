@@ -1,0 +1,294 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Answer Library | Mistake Museum</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #F7F3EA;
+            color: #25232B;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .navbar {
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e8e2d7;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 23px;
+            font-weight: 700;
+            text-decoration: none;
+            color: #25232B;
+        }
+
+        .logo span {
+            color: #9A82DF;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #77717B;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 55px auto;
+            padding: 0 25px;
+        }
+
+        .eyebrow {
+            color: #927ACB;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(30px, 5vw, 42px);
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: #827C85;
+            margin-top: 9px;
+            font-size: 14px;
+        }
+
+        .summary {
+            margin-top: 30px;
+            background: white;
+            border: 1px solid #eee9e1;
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: inline-block;
+        }
+
+        .summary span {
+            color: #927ACB;
+            font-weight: 700;
+            font-size: 24px;
+        }
+
+        .search {
+            width: 100%;
+            padding: 15px 18px;
+            border: 1px solid #e8e2d7;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            margin: 30px 0 22px;
+            outline: none;
+        }
+
+        .search:focus {
+            border-color: #9A82DF;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            margin-bottom: 18px;
+        }
+
+        .subjects {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .subject-card {
+            background: white;
+            border: 1px solid #eee9e1;
+            border-radius: 18px;
+            padding: 25px;
+            text-decoration: none;
+            color: #25232B;
+            transition: 0.2s;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-4px);
+            border-color: #B9A6F5;
+            box-shadow: 0 8px 25px rgba(60, 45, 90, 0.07);
+        }
+
+        .subject-icon {
+            font-size: 27px;
+            margin-bottom: 18px;
+        }
+
+        .subject-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+        .subject-count {
+            color: #89828D;
+            font-size: 13px;
+            margin-top: 9px;
+        }
+
+        .empty-state {
+            background: white;
+            border: 1px solid #eee9e1;
+            border-radius: 18px;
+            padding: 45px 25px;
+            text-align: center;
+            color: #827C85;
+        }
+
+        .empty-state h2 {
+            color: #25232B;
+            font-family: 'Space Grotesk', sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #826BB8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            color: #A39BA4;
+            padding: 35px 15px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 750px) {
+            .subjects {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .subjects {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <a href="/" class="logo">mistake museum<span>.</span></a>
+
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/upload">Submit an answer</a>
+    </div>
+</nav>
+
+<main class="container">
+
+    <div class="eyebrow">YOUR LEARNING LIBRARY ✦</div>
+
+    <h1>Your Answer Library</h1>
+
+    <p class="subtitle">
+        Explore your previous mistakes, subject by subject.
+    </p>
+
+    <div class="summary">
+        <span th:text="${totalMistakes}">0</span>
+        <p>Answers analysed</p>
+    </div>
+
+    <input
+        type="text"
+        class="search"
+        id="subject-search"
+        placeholder="Search for a subject..."
+        oninput="filterSubjects()">
+
+    <h2 class="section-title">Your subjects</h2>
+
+    <div th:if="${subjectCounts.isEmpty()}" class="empty-state">
+        <h2>Your library is waiting!</h2>
+        <p>You haven't analysed any answers yet.</p>
+        <p>Once you analyse an answer, its subject will appear here.</p>
+    </div>
+
+    <div class="subjects" id="subject-list"
+         th:unless="${subjectCounts.isEmpty()}">
+
+        <a class="subject-card"
+           th:each="entry : ${subjectCounts}"
+           th:href="@{/history/subject/{subject}(subject=${entry.key})}">
+
+            <div class="subject-icon">📚</div>
+
+            <div class="subject-name"
+                 th:text="${entry.key}">
+                Mathematics
+            </div>
+
+            <div class="subject-count">
+                <span th:text="${entry.value}">0</span>
+                saved answers
+            </div>
+
+        </a>
+
+    </div>
+
+    <a href="/dashboard" class="back-link">
+        ← Back to Dashboard
+    </a>
+
+</main>
+
+<footer>
+    made with curiosity (and a few mistakes) ♡ · mistake museum.
+</footer>
+
+<script>
+    function filterSubjects() {
+        var search = document.getElementById('subject-search')
+            .value.toLowerCase();
+
+        var cards = document.querySelectorAll('.subject-card');
+
+        cards.forEach(function(card) {
+            var subject = card.querySelector('.subject-name')
+                .textContent.toLowerCase();
+
+            card.style.display = subject.includes(search)
+                ? ''
+                : 'none';
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -29,11 +29,12 @@ public class ProfileService {
         List<Mistake> list = mistakes.findByStudentId(student.getId());
         int total = list.size();
 
-        // 1. Count mistakes per label (the student's correction counts if it exists)
+        // 1. Count mistakes per label
         Map<String, Integer> counts = new LinkedHashMap<>();
         for (Label l : Label.values()) {
             counts.put(l.name(), 0);
         }
+
         for (Mistake m : list) {
             Label label = m.getEffectiveLabel();
             if (label != null) {
@@ -44,6 +45,7 @@ public class ProfileService {
         // 2. Find the most common label
         String topLabel = null;
         int topCount = 0;
+
         for (Map.Entry<String, Integer> e : counts.entrySet()) {
             if (e.getValue() > topCount) {
                 topLabel = e.getKey();
@@ -51,18 +53,23 @@ public class ProfileService {
             }
         }
 
-        // 3. Find the most common topic inside that label
+        // 3. Find the most common topic inside the top label
         String topTopic = null;
+
         if (topLabel != null) {
             Map<String, Integer> topics = new HashMap<>();
+
             for (Mistake m : list) {
                 Label l = m.getEffectiveLabel();
+
                 if (l != null && l.name().equals(topLabel)
                         && m.getTopic() != null && !m.getTopic().isBlank()) {
                     topics.merge(m.getTopic().trim(), 1, Integer::sum);
                 }
             }
+
             int best = 0;
+
             for (Map.Entry<String, Integer> e : topics.entrySet()) {
                 if (e.getValue() > best) {
                     topTopic = e.getKey();
@@ -71,24 +78,56 @@ public class ProfileService {
             }
         }
 
-        // 4. Count mistakes per week (keyed by the Monday of that week)
+        // 4. Count mistakes for each subject
+Map<String, Integer> subjectCounts = new LinkedHashMap<>();
+
+subjectCounts.put("Mathematics", 0);
+subjectCounts.put("Physics", 0);
+subjectCounts.put("Chemistry", 0);
+subjectCounts.put("English", 0);
+
+for (Mistake m : list) {
+    if (m.getSubject() != null) {
+        String subject = m.getSubject().trim();
+
+        if (subjectCounts.containsKey(subject)) {
+            subjectCounts.merge(subject, 1, Integer::sum);
+        }
+    }
+}
+
+        // 5. Count mistakes per week
         Map<String, Integer> weekly = new TreeMap<>();
+
         for (Mistake m : list) {
-            LocalDate day = m.getCreatedAt().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate day = m.getCreatedAt()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+
             weekly.merge(day.with(DayOfWeek.MONDAY).toString(), 1, Integer::sum);
         }
 
-        // 5. Write the sentence
+        // 6. Write the sentence
         String sentence;
+
         if (total == 0 || topLabel == null) {
             sentence = "No mistakes saved yet. Upload one to start your profile.";
         } else {
             long percent = Math.round(100.0 * topCount / total);
+
             sentence = percent + "% of your mistakes are "
                     + topLabel.toLowerCase().replace('_', ' ')
                     + (topTopic != null ? ", mostly in " + topTopic : "") + ".";
         }
 
-        return new ProfileResponse(total, counts, topLabel, topTopic, sentence, weekly);
+        return new ProfileResponse(
+                total,
+                counts,
+                topLabel,
+                topTopic,
+                sentence,
+                weekly,
+                subjectCounts
+        );
     }
 }

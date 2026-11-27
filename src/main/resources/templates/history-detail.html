@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Answer Analysis | Mistake Museum</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #F7F3EA;
+            color: #25232B;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .navbar {
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e8e2d7;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 23px;
+            font-weight: 700;
+            text-decoration: none;
+            color: #25232B;
+        }
+
+        .logo span { color: #9A82DF; }
+
+        .nav-links { display: flex; gap: 25px; }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #77717B;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 55px auto;
+            padding: 0 25px;
+        }
+
+        .back-link {
+            color: #826BB8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .eyebrow {
+            color: #927ACB;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-top: 35px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(30px, 5vw, 40px);
+        }
+
+        .subtitle {
+            color: #827C85;
+            margin-top: 9px;
+            font-size: 14px;
+        }
+
+        .analysis-card {
+            background: white;
+            border: 1px solid #eee9e1;
+            border-radius: 18px;
+            padding: 25px;
+            margin-top: 22px;
+        }
+
+        .analysis-card h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            margin-bottom: 14px;
+        }
+
+        .answer-text {
+            color: #625D67;
+            font-size: 14px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .label {
+            display: inline-block;
+            padding: 8px 14px;
+            background: #F1ECFA;
+            color: #826BB8;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .metadata {
+            color: #827C85;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        footer {
+            text-align: center;
+            color: #A39BA4;
+            padding: 35px 15px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 500px) {
+            .navbar { padding: 18px 5%; }
+            .nav-links { gap: 12px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <a href="/" class="logo">mistake museum<span>.</span></a>
+
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/upload">Submit an answer</a>
+    </div>
+</nav>
+
+<main class="container">
+
+    <a href="/history" class="back-link">← Back to Answer Library</a>
+
+    <div class="eyebrow">YOUR PREVIOUS ANALYSIS ✦</div>
+
+    <h1>Answer Details</h1>
+
+    <p class="subtitle">
+        Review your original answer and the feedback you received.
+    </p>
+
+    <div class="analysis-card">
+        <h2>Subject and Topic</h2>
+
+        <p class="answer-text"
+           th:text="${mistake.subject != null ? mistake.subject : 'Not provided'}">
+            Mathematics
+        </p>
+
+        <p class="metadata">
+            Topic:
+            <span th:text="${mistake.topic != null ? mistake.topic : 'Not provided'}">
+                Algebra
+            </span>
+        </p>
+
+        <p class="metadata">
+            Saved on:
+            <span th:text="${mistake.createdAt != null ? #temporals.format(mistake.createdAt.atZone(T(java.time.ZoneId).of('UTC')), 'dd MMM yyyy, hh:mm a') : 'Date unavailable'}">
+                27 Nov 2026
+            </span>
+        </p>
+    </div>
+
+    <div class="analysis-card">
+        <h2>Question</h2>
+        <p class="answer-text"
+           th:text="${mistake.question != null ? mistake.question : 'Not provided'}">
+            Your question
+        </p>
+    </div>
+
+    <div class="analysis-card">
+        <h2>Your Answer</h2>
+        <p class="answer-text"
+           th:text="${mistake.studentAnswer != null ? mistake.studentAnswer : 'Not provided'}">
+            Your answer
+        </p>
+    </div>
+
+    <div class="analysis-card">
+        <h2>Correct Answer</h2>
+        <p class="answer-text"
+           th:text="${mistake.correction != null ? mistake.correction : 'Not provided'}">
+            Correct answer
+        </p>
+    </div>
+
+    <div class="analysis-card">
+        <h2>Mistake Classification</h2>
+        <span class="label"
+              th:text="${mistake.effectiveLabel != null ? mistake.effectiveLabel : 'Not classified'}">
+            Conceptual misunderstanding
+        </span>
+    </div>
+
+    <div class="analysis-card">
+        <h2>What Went Wrong?</h2>
+        <p class="answer-text"
+           th:text="${mistake.reason != null ? mistake.reason : 'No explanation saved'}">
+            AI explanation
+        </p>
+    </div>
+
+    <div class="analysis-card">
+        <h2>Error Step</h2>
+        <p class="answer-text"
+           th:text="${mistake.errorStep != null ? mistake.errorStep : 'No specific error step saved'}">
+            Error step
+        </p>
+    </div>
+
+    <div class="analysis-card">
+        <h2>Analysis Confidence</h2>
+        <p class="answer-text"
+           th:text="${#numbers.formatDecimal(mistake.confidence * 100, 1, 2)} + '%'">
+            90%
+        </p>
+    </div>
+
+</main>
+
+<footer>made with curiosity (and a few mistakes) ♡ · mistake museum.</footer>
+
+</body>
+</html>

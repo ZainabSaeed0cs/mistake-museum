@@ -447,12 +447,17 @@
             <h2>Topics to revisit</h2>
             <p class="panel-subtitle">Topics identified from your analysed answers</p>
         
-            <div id="top-topic" class="topic" style="display:none;">
-                <span id="top-topic-name"></span>
-                <button type="button" class="topic-tag"
-                onclick="document.getElementById('history-panel').scrollIntoView({ behavior: 'smooth' });">
-            Revisit
-        </button>
+            <div id="topic-list" style="display:none; margin-top:12px;">
+
+                <div id="subjects-container"
+                     style="display:grid; grid-template-columns:repeat(2, 1fr); gap:12px;">
+                </div>
+            
+                <a href="/history" class="topic-tag"
+                   style="text-decoration:none; display:inline-block; margin-top:12px;">
+                    Revisit all answers →
+                </a>
+            
             </div>
         
     </div>
@@ -468,17 +473,6 @@
     <a href="/practice" class="primary-btn">
         Open Practice Room →
     </a>
-</section>
-<!-- Answer History -->
-<section class="panel" id="history-panel" style="margin-top:20px;">
-    <h2>Your answer history</h2>
-    <p class="panel-subtitle">
-        Revisit your previous answers and the feedback you received.
-    </p>
-
-    <div id="history-content">
-        Loading your answer history...
-    </div>
 </section>
 
  
@@ -522,10 +516,48 @@ fetch('/api/profile')
 
         document.getElementById('empty-state').style.display = 'none';
 
-        if (p.topTopic) {
-            document.getElementById('top-topic-name').textContent = p.topTopic;
-            document.getElementById('top-topic').style.display = 'flex';
-        }
+        var subjectCounts = p.subjectCounts || {};
+
+var subjectsContainer = document.getElementById('subjects-container');
+var subjectList = document.getElementById('topic-list');
+
+var subjects = ['Mathematics', 'Physics', 'Chemistry', 'English'];
+
+subjectsContainer.innerHTML = '';
+
+subjects.forEach(function(subject) {
+    var count = subjectCounts[subject] || 0;
+
+    var card = document.createElement('div');
+    card.style.padding = '16px';
+    card.style.border = '1px solid #e5e7eb';
+    card.style.borderRadius = '12px';
+    card.style.background = '#ffffff';
+
+    var number = document.createElement('div');
+    number.textContent = count;
+    number.style.fontSize = '24px';
+    number.style.fontWeight = '700';
+
+    var name = document.createElement('div');
+    name.textContent = subject;
+    name.style.fontWeight = '600';
+    name.style.marginTop = '5px';
+
+    var label = document.createElement('div');
+    label.textContent = count === 1 ? 'mistake' : 'mistakes';
+    label.style.fontSize = '12px';
+    label.style.color = '#777';
+    label.style.marginTop = '3px';
+
+    card.appendChild(number);
+    card.appendChild(name);
+    card.appendChild(label);
+
+    subjectsContainer.appendChild(card);
+});
+
+subjectList.style.display = 'block';
 
         Object.keys(p.countsByLabel).forEach(function (label) {
             var pct = Math.round(
@@ -597,78 +629,7 @@ fetch('/api/practice')
         document.getElementById('practice-content').textContent =
             'Unable to load practice questions right now.';
     });
-    fetch('/api/mistakes')
-    .then(function(response) {
-        if (!response.ok) {
-            throw new Error('History request failed');
-        }
-        return response.json();
-    })
-    .then(function(mistakes) {
-        var historyContent = document.getElementById('history-content');
-
-        if (!Array.isArray(mistakes) || mistakes.length === 0) {
-            historyContent.textContent =
-                'No saved answers yet. Your analysed answers will appear here.';
-            return;
-        }
-
-        historyContent.textContent = '';
-
-        mistakes.forEach(function(item, index) {
-            var entry = document.createElement('div');
-            entry.style.padding = '18px 0';
-            entry.style.borderBottom = '1px solid #F1EEF3';
-
-            var heading = document.createElement('h3');
-            heading.textContent =
-                (item.subject || 'Subject') + ' · ' + (item.topic || 'Topic');
-
-            var label = document.createElement('p');
-            label.textContent = 'Mistake type: ' +
-                (item.effectiveLabel || 'Not classified');
-
-            var details = document.createElement('details');
-
-            var summary = document.createElement('summary');
-            summary.textContent = 'View previous answer and feedback';
-
-            details.appendChild(summary);
-
-            function addDetail(title, value) {
-                var paragraph = document.createElement('p');
-                paragraph.style.marginTop = '10px';
-
-                var strong = document.createElement('strong');
-                strong.textContent = title + ': ';
-
-                paragraph.appendChild(strong);
-                paragraph.appendChild(
-                    document.createTextNode(value || 'Not provided')
-                );
-
-                details.appendChild(paragraph);
-            }
-
-            addDetail('Question', item.question);
-            addDetail('Your answer', item.studentAnswer);
-            addDetail('Correct answer', item.correction);
-            addDetail('What went wrong', item.reason);
-            addDetail('Error step', item.errorStep);
-
-            entry.appendChild(heading);
-            entry.appendChild(label);
-            entry.appendChild(details);
-
-            historyContent.appendChild(entry);
-        });
-    })
-    .catch(function(error) {
-        console.error('Error loading answer history:', error);
-
-        document.getElementById('history-content').textContent =
-            'Unable to load your answer history right now.';
-    });
+  
 </script>
 
 </body>

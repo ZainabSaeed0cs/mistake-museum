@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${subject} + ' History | Mistake Museum'">Subject History</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #F7F3EA;
+            color: #25232B;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .navbar {
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e8e2d7;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 23px;
+            font-weight: 700;
+            text-decoration: none;
+            color: #25232B;
+        }
+
+        .logo span { color: #9A82DF; }
+
+        .nav-links { display: flex; gap: 25px; }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #77717B;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 55px auto;
+            padding: 0 25px;
+        }
+
+        .back-link {
+            color: #826BB8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .eyebrow {
+            color: #927ACB;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-top: 35px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(30px, 5vw, 42px);
+        }
+
+        .subtitle {
+            color: #827C85;
+            margin-top: 9px;
+            font-size: 14px;
+        }
+
+        .mistake-list {
+            margin-top: 30px;
+            display: grid;
+            gap: 16px;
+        }
+
+        .mistake-card {
+            background: white;
+            border: 1px solid #eee9e1;
+            border-radius: 16px;
+            padding: 23px;
+        }
+
+        .mistake-topic {
+            color: #927ACB;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .mistake-question {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .mistake-label {
+            display: inline-block;
+            margin-top: 13px;
+            padding: 7px 12px;
+            background: #F1ECFA;
+            color: #826BB8;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .view-link {
+            display: inline-block;
+            margin-top: 17px;
+            color: #826BB8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            background: white;
+            border: 1px solid #eee9e1;
+            border-radius: 18px;
+            padding: 45px 25px;
+            text-align: center;
+            color: #827C85;
+            margin-top: 30px;
+        }
+
+        .empty-state h2 {
+            color: #25232B;
+            margin-bottom: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        footer {
+            text-align: center;
+            color: #A39BA4;
+            padding: 35px 15px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 500px) {
+            .navbar { padding: 18px 5%; }
+            .nav-links { gap: 12px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <a href="/" class="logo">mistake museum<span>.</span></a>
+
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/upload">Submit an answer</a>
+    </div>
+</nav>
+
+<main class="container">
+
+    <a href="/history" class="back-link">← Back to Answer Library</a>
+
+    <div class="eyebrow">SUBJECT COLLECTION ✦</div>
+
+    <h1 th:text="${subject}">Mathematics</h1>
+
+    <p class="subtitle">
+        Revisit the answers you've previously analysed in this subject.
+    </p>
+
+    <div th:if="${mistakes.isEmpty()}" class="empty-state">
+        <h2>No saved answers found</h2>
+        <p>There are currently no saved answers for this subject.</p>
+    </div>
+
+    <div class="mistake-list" th:unless="${mistakes.isEmpty()}">
+
+        <div class="mistake-card" th:each="mistake : ${mistakes}">
+
+            <div class="mistake-topic"
+                 th:text="${mistake.topic != null ? mistake.topic : 'General topic'}">
+                Algebra
+            </div>
+
+            <div class="mistake-question"
+                 th:text="${mistake.question != null ? mistake.question : 'No question saved'}">
+                Example question
+            </div>
+
+            <div class="mistake-label"
+                 th:text="${mistake.effectiveLabel != null ? mistake.effectiveLabel : 'Not classified'}">
+                Conceptual misunderstanding
+            </div>
+
+            <br>
+
+            <a class="view-link"
+               th:href="@{/history/mistake/{id}(id=${mistake.id})}">
+                View full analysis →
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+<footer>made with curiosity (and a few mistakes) ♡ · mistake museum.</footer>
+
+</body>
+</html>
