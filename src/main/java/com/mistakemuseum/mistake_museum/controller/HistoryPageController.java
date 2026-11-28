@@ -11,6 +11,9 @@ import com.mistakemuseum.mistake_museum.service.StudentService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -106,4 +109,23 @@ public class HistoryPageController {
 
         return "history-subject";
     }
+    @GetMapping("/history/mistake/{id}")
+public String mistakeDetail(
+        @PathVariable Long id,
+        Authentication authentication,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Model model) {
+
+    Student student = studentService.getCurrentStudent(
+            authentication, request, response);
+
+    Mistake mistake = mistakeRepository.findByIdAndStudent(id, student)
+            .orElseThrow(() ->
+                    new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    model.addAttribute("mistake", mistake);
+
+    return "history-detail";
+}
 }
