@@ -101,7 +101,7 @@ for (Mistake m : list) {
 
         for (Mistake m : list) {
             LocalDate day = m.getCreatedAt()
-                    .atZone(ZoneId.systemDefault())
+                    .atZone(ZoneId.of("Asia/Karachi"))
                     .toLocalDate();
 
             weekly.merge(day.with(DayOfWeek.MONDAY).toString(), 1, Integer::sum);
