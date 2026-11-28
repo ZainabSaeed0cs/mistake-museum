@@ -327,6 +327,39 @@
             font-size: 14px;
             line-height: 1.6;
         }
+        .feedback-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-got-it {
+    background: #e9f6ee;
+    color: #2f7045;
+    border: 1px solid #b8dfc3;
+    border-radius: 12px;
+    padding: 11px 17px;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-missed-it {
+    background: #fff0ed;
+    color: #b42318;
+    border: 1px solid #f3c4bc;
+    border-radius: 12px;
+    padding: 11px 17px;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.feedback-row button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
 
         @media (max-width: 680px) {
             .settings-grid {
@@ -470,9 +503,25 @@
                 <div class="question-text" th:text="${q.questionText}">Question text</div>
                 <button type="button" class="btn-secondary" onclick="toggleAnswer(this)">Show Answer</button>
                 <div class="answer-box">
-                    <div><strong>Answer:</strong> <span th:text="${q.answer}">Answer</span></div>
-                    <div style="margin-top: 6px;"><strong>Explanation:</strong> <span th:text="${q.explanation}">Explanation</span></div>
-                </div>
+    <div><strong>Answer:</strong> <span th:text="${q.answer}">Answer</span></div>
+    <div style="margin-top: 6px;"><strong>Explanation:</strong> <span th:text="${q.explanation}">Explanation</span></div>
+</div>
+
+<div class="feedback-row">
+    <button type="button"
+            class="btn-got-it practice-result-btn"
+            data-correct="true"
+            th:attr="data-question-text=${q.questionText},data-topic=${q.subjectAndTopic}">
+        ✓ Got it
+    </button>
+
+    <button type="button"
+            class="btn-missed-it practice-result-btn"
+            data-correct="false"
+            th:attr="data-question-text=${q.questionText},data-topic=${q.subjectAndTopic}">
+        ✗ Missed it
+    </button>
+</div>
             </div>
         </div>
     </section>
@@ -493,7 +542,88 @@
     const generateBtn = document.getElementById("generateBtn");
     const generateAnotherBtn = document.getElementById("generateAnotherBtn");
     const statusBanner = document.getElementById("practiceStatus");
+// Save a student's Got it / Missed it response
+async function savePracticeResult(button) {
 
+    const csrfInput = form.querySelector('input[type="hidden"]');
+
+    if (!csrfInput) {
+        showStatus("Security token missing. Please refresh the page.", true);
+        return;
+    }
+
+    const card = button.closest(".question-card");
+    const feedbackButtons = card.querySelectorAll(".practice-result-btn");
+
+    feedbackButtons.forEach(function (btn) {
+        btn.disabled = true;
+    });
+
+    const originalText = button.textContent;
+    button.textContent = "Saving...";
+
+    const correct = button.dataset.correct === "true";
+
+    const subject =
+        document.getElementById("subjectSelect").value || "General";
+
+    const topic =
+        document.getElementById("topicSelect").value ||
+        button.dataset.topic ||
+        "Mixed practice";
+
+    try {
+        const response = await fetch("/api/practice/result", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfInput.value
+            },
+            body: JSON.stringify({
+                subject: subject,
+                topic: topic,
+                questionText: button.dataset.questionText,
+                correct: correct
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Could not save your practice result.");
+        }
+
+        button.textContent = correct
+            ? "✓ Got it - Recorded"
+            : "✗ Missed it - Recorded";
+
+        showStatus(
+            correct
+                ? "Great! Your correct answer has been recorded."
+                : "Your response has been recorded. Keep practising!",
+            false
+        );
+
+    } catch (error) {
+        button.textContent = originalText;
+
+        feedbackButtons.forEach(function (btn) {
+            btn.disabled = false;
+        });
+
+        showStatus(error.message, true);
+    }
+}
+
+// Handle clicks on both initially displayed and generated questions
+document.addEventListener("click", function (event) {
+
+    const button = event.target.closest(".practice-result-btn");
+
+    if (!button) {
+        return;
+    }
+
+    savePracticeResult(button);
+});
     let previousQuestions = [];
 
     function showStatus(message, isError) {
@@ -627,7 +757,28 @@ saveButton.addEventListener("click", async function () {
     }
 });
 
-card.append(top, question, button, answerBox, saveButton);
+const feedbackRow = document.createElement("div");
+feedbackRow.className = "feedback-row";
+
+const gotItButton = document.createElement("button");
+gotItButton.type = "button";
+gotItButton.className = "btn-got-it practice-result-btn";
+gotItButton.dataset.correct = "true";
+gotItButton.dataset.questionText = q.questionText;
+gotItButton.dataset.topic = q.subjectAndTopic;
+gotItButton.textContent = "✓ Got it";
+
+const missedItButton = document.createElement("button");
+missedItButton.type = "button";
+missedItButton.className = "btn-missed-it practice-result-btn";
+missedItButton.dataset.correct = "false";
+missedItButton.dataset.questionText = q.questionText;
+missedItButton.dataset.topic = q.subjectAndTopic;
+missedItButton.textContent = "✗ Missed it";
+
+feedbackRow.append(gotItButton, missedItButton);
+
+card.append(top, question, button, answerBox, saveButton, feedbackRow);
             container.appendChild(card);
         });
     }

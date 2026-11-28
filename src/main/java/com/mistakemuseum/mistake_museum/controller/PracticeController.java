@@ -5,8 +5,10 @@ import com.mistakemuseum.mistake_museum.model.Label;
 import com.mistakemuseum.mistake_museum.model.Mistake;
 import com.mistakemuseum.mistake_museum.model.PracticeQuestion;
 import com.mistakemuseum.mistake_museum.model.GeneratedQuestion;
+import com.mistakemuseum.mistake_museum.model.PracticeResult;
 import com.mistakemuseum.mistake_museum.model.Student;
 import com.mistakemuseum.mistake_museum.repository.MistakeRepository;
+import com.mistakemuseum.mistake_museum.repository.PracticeResultRepository;
 import com.mistakemuseum.mistake_museum.service.PracticeService;
 import com.mistakemuseum.mistake_museum.service.ProfileService;
 import com.mistakemuseum.mistake_museum.service.StudentService;
@@ -30,16 +32,19 @@ public class PracticeController {
     private final ProfileService profileService;
     private final PracticeService practiceService;
     private final MistakeRepository mistakeRepository;
+    private final PracticeResultRepository practiceResultRepository;
 
     public PracticeController(
             StudentService studentService,
             ProfileService profileService,
             PracticeService practiceService,
-            MistakeRepository mistakeRepository) {
+            MistakeRepository mistakeRepository,
+            PracticeResultRepository practiceResultRepository) {
         this.studentService = studentService;
         this.profileService = profileService;
         this.practiceService = practiceService;
         this.mistakeRepository = mistakeRepository;
+        this.practiceResultRepository = practiceResultRepository;
     }
 
     @GetMapping("/api/practice")
@@ -98,12 +103,67 @@ public class PracticeController {
         );
     }
 
+    @PostMapping("/api/practice/result")
+    public String savePracticeResult(
+            Authentication authentication,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestBody PracticeResultRequest body) {
+
+        Student student = studentService.getCurrentStudent(
+                authentication, request, response);
+
+        PracticeResult result = new PracticeResult();
+        result.setStudent(student);
+        result.setSubject(body.subject());
+        result.setTopic(body.topic());
+        result.setQuestionText(body.questionText());
+        result.setCorrect(body.correct());
+
+        practiceResultRepository.save(result);
+
+        return "Practice result saved successfully.";
+    }
+
+    @GetMapping("/api/practice/summary")
+    public PracticeSummary getPracticeSummary(
+            Authentication authentication,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        Student student = studentService.getCurrentStudent(
+                authentication, request, response);
+
+        long totalAnswered =
+                practiceResultRepository.countByStudentId(student.getId());
+
+        long correctAnswers =
+                practiceResultRepository.countByStudentIdAndCorrectTrue(
+                        student.getId());
+
+        return new PracticeSummary(totalAnswered, correctAnswers);
+    }
+
     public record PracticeRequest(
             String subject,
             String topic,
             String difficulty,
             int count,
             List<String> previousQuestions
+    ) {
+    }
+
+    public record PracticeResultRequest(
+            String subject,
+            String topic,
+            String questionText,
+            boolean correct
+    ) {
+    }
+
+    public record PracticeSummary(
+            long totalAnswered,
+            long correctAnswers
     ) {
     }
 }

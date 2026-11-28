@@ -114,6 +114,8 @@
             font-weight: 600;
             font-size: 14px;
             transition: 0.2s;
+            border: none;
+            cursor: pointer;
         }
 
         .primary-btn:hover {
@@ -121,7 +123,6 @@
             transform: translateY(-2px);
         }
 
-        
         .stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -213,10 +214,10 @@
         }
 
         .purple { background: #B9A6F5; }
-.pink { background: #F5A9B9; }
-.yellow { background: #F5D77C; }
-.green { background: #BBD9BD; }
-.blue { background: #A9C8EA; }
+        .pink { background: #F5A9B9; }
+        .yellow { background: #F5D77C; }
+        .green { background: #BBD9BD; }
+        .blue { background: #A9C8EA; }
 
         .topic {
             display: flex;
@@ -382,19 +383,13 @@
             <div class="stat-icon">📝</div>
             <div class="stat-label">Answers analysed</div>
             <div class="stat-number" id="total">0</div>
-           
         </div>
 
         <div class="stat-card">
             <div class="stat-icon">🧠</div>
             <div class="stat-label">Concept gaps found</div>
             <div class="stat-number" id="concept-gaps">0</div>
-            
         </div>
-
-        
-
-    
 
     </section>
 
@@ -448,62 +443,81 @@
         <div class="panel">
             <h2>Topics to revisit</h2>
             <p class="panel-subtitle">Topics identified from your analysed answers</p>
-        
+
             <div id="topic-list" style="display:none; margin-top:12px;">
 
                 <div id="subjects-container"
                      style="display:grid; grid-template-columns:repeat(2, 1fr); gap:12px;">
                 </div>
-            
+
                 <a href="/history" class="topic-tag"
                    style="text-decoration:none; display:inline-block; margin-top:12px;">
                     Revisit all answers →
                 </a>
-            
+
             </div>
-        
-    </div>
-</section>
+        </div>
 
-<!-- Weekly Mistakes Chart -->
-<section class="panel" style="margin-top:20px;">
-    <h2>Mistakes per week</h2>
-    <p class="panel-subtitle">How many mistakes you analysed each week</p>
-    <div style="position:relative; height:240px;">
-        <canvas id="weeklyChart"></canvas>
-    </div>
-</section>
+    </section>
 
-<!-- Practice Room -->
-<section class="panel" style="margin-top:20px;">
-    <h2>Practice your weak areas</h2>
-    <p class="panel-subtitle">
-        Strengthen your understanding with questions based on your previous mistakes.
-    </p>
-    <a href="/practice" class="primary-btn">
-        Open Practice Room →
-    </a>
-</section>
+    <!-- Weekly Mistakes Chart -->
+    <section class="panel" style="margin-top:20px;">
+        <h2>Mistakes per week</h2>
+        <p class="panel-subtitle">How many mistakes you analysed each week</p>
+        <div style="position:relative; height:240px;">
+            <canvas id="weeklyChart"></canvas>
+        </div>
+    </section>
 
- 
-<section class="panel" style="margin-top:20px;">
-    <h2>Your data</h2>
-    <p class="panel-subtitle">
-        Your mistakes, saved questions and account are stored only for this app.
-        Answers you submit are sent to Google's Gemini AI for analysis.
-        You can delete everything at any time.
-    </p>
-    <form th:action="@{/account/delete}" method="post"
-          onsubmit="return confirm('Delete your account and all your data? This cannot be undone.');">
-        <button type="submit"
-                style="padding:10px 18px; border-radius:12px; border:1px solid #b42318;
-                background:#fff; color:#b42318; cursor:pointer; font-weight:600;">
-            Delete my data
-        </button>
-    </form>
-</section>
+    <!-- Practice Room -->
+    <section class="panel" style="margin-top:20px;">
+        <h2>Your Practice Results</h2>
+        <p class="panel-subtitle">
+            Track your progress as you practise your weak areas.
+        </p>
 
-<section class="bottom-cta">
+        <div class="stats" style="margin-bottom:20px;">
+
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-label">Questions answered</div>
+                <div class="stat-number" id="practice-total">0</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Correct answers</div>
+                <div class="stat-number" id="practice-correct">0</div>
+            </div>
+
+        </div>
+
+        <a href="/practice" class="primary-btn">
+            Open Practice Room →
+        </a>
+    </section>
+
+    <!-- Your Data -->
+    <section class="panel" style="margin-top:20px;">
+        <h2>Your data</h2>
+        <p class="panel-subtitle">
+            Your mistakes, saved questions and account are stored only for this app.
+            Answers you submit are sent to Google's Gemini AI for analysis.
+            You can delete everything at any time.
+        </p>
+
+        <form th:action="@{/account/delete}" method="post"
+              onsubmit="return confirm('Delete your account and all your data? This cannot be undone.');">
+
+            <button type="submit"
+                    style="padding:10px 18px; border-radius:12px; border:1px solid #b42318;
+                    background:#fff; color:#b42318; cursor:pointer; font-weight:600;">
+                Delete my data
+            </button>
+        </form>
+    </section>
+
+    <section class="bottom-cta">
 
         <div>
             <h2>Ready to turn another mistake into progress?</h2>
@@ -519,20 +533,30 @@
     made with curiosity (and a few mistakes) ♡ · mistake museum.
 </footer>
 
-<form th:action="@{/logout}" method="post" style="position:fixed; top:8px; right:12px; z-index:50;">
-    <button type="submit" style="padding:6px 12px; border-radius:10px; border:1px solid #ddd; background:#fff; cursor:pointer; font-size:13px;">Log out</button>
+<form th:action="@{/logout}" method="post"
+      style="position:fixed; top:8px; right:12px; z-index:50;">
+    <button type="submit"
+            style="padding:6px 12px; border-radius:10px; border:1px solid #ddd; background:#fff; cursor:pointer; font-size:13px;">
+        Log out
+    </button>
 </form>
 
 <script>
+
+// Load existing mistake/profile statistics
 fetch('/api/profile')
     .then(function (r) {
+        if (!r.ok) {
+            throw new Error('Could not load profile');
+        }
         return r.json();
     })
     .then(function (p) {
+
         document.getElementById('total').textContent = p.totalMistakes;
 
         document.getElementById('concept-gaps').textContent =
-            p.countsByLabel.CONCEPT_GAP || 0;
+            (p.countsByLabel && p.countsByLabel.CONCEPT_GAP) || 0;
 
         if (!p.totalMistakes) {
             document.getElementById('empty-state').style.display = 'block';
@@ -545,57 +569,66 @@ fetch('/api/profile')
 
         var subjectCounts = p.subjectCounts || {};
 
-var subjectsContainer = document.getElementById('subjects-container');
-var subjectList = document.getElementById('topic-list');
+        var subjectsContainer = document.getElementById('subjects-container');
+        var subjectList = document.getElementById('topic-list');
 
-var subjects = ['Mathematics', 'Physics', 'Chemistry', 'English'];
+        var subjects = ['Mathematics', 'Physics', 'Chemistry', 'English'];
 
-subjectsContainer.innerHTML = '';
+        subjectsContainer.innerHTML = '';
 
-subjects.forEach(function(subject) {
-    var count = subjectCounts[subject] || 0;
+        subjects.forEach(function(subject) {
 
-    var card = document.createElement('div');
-    card.style.padding = '16px';
-    card.style.border = '1px solid #e5e7eb';
-    card.style.borderRadius = '12px';
-    card.style.background = '#ffffff';
+            var count = subjectCounts[subject] || 0;
 
-    var number = document.createElement('div');
-    number.textContent = count;
-    number.style.fontSize = '24px';
-    number.style.fontWeight = '700';
+            var card = document.createElement('div');
+            card.style.padding = '16px';
+            card.style.border = '1px solid #e5e7eb';
+            card.style.borderRadius = '12px';
+            card.style.background = '#ffffff';
 
-    var name = document.createElement('div');
-    name.textContent = subject;
-    name.style.fontWeight = '600';
-    name.style.marginTop = '5px';
+            var number = document.createElement('div');
+            number.textContent = count;
+            number.style.fontSize = '24px';
+            number.style.fontWeight = '700';
 
-    var label = document.createElement('div');
-    label.textContent = count === 1 ? 'mistake' : 'mistakes';
-    label.style.fontSize = '12px';
-    label.style.color = '#777';
-    label.style.marginTop = '3px';
+            var name = document.createElement('div');
+            name.textContent = subject;
+            name.style.fontWeight = '600';
+            name.style.marginTop = '5px';
 
-    card.appendChild(number);
-    card.appendChild(name);
-    card.appendChild(label);
+            var label = document.createElement('div');
+            label.textContent = count === 1 ? 'mistake' : 'mistakes';
+            label.style.fontSize = '12px';
+            label.style.color = '#777';
+            label.style.marginTop = '3px';
 
-    subjectsContainer.appendChild(card);
-});
+            card.appendChild(number);
+            card.appendChild(name);
+            card.appendChild(label);
 
-subjectList.style.display = 'block';
+            subjectsContainer.appendChild(card);
+        });
 
-        Object.keys(p.countsByLabel).forEach(function (label) {
+        subjectList.style.display = 'block';
+
+        var countsByLabel = p.countsByLabel || {};
+
+        Object.keys(countsByLabel).forEach(function (label) {
+
             var pct = Math.round(
-                p.countsByLabel[label] * 100 / p.totalMistakes
+                countsByLabel[label] * 100 / p.totalMistakes
             );
 
             var bar = document.getElementById('bar-' + label);
             var percentage = document.getElementById('pct-' + label);
 
-            if (bar) bar.style.width = pct + '%';
-            if (percentage) percentage.textContent = pct + '%';
+            if (bar) {
+                bar.style.width = pct + '%';
+            }
+
+            if (percentage) {
+                percentage.textContent = pct + '%';
+            }
         });
 
         // Weekly mistakes chart
@@ -603,12 +636,15 @@ subjectList.style.display = 'block';
         var weeks = Object.keys(weekly);
 
         if (window.Chart && weeks.length) {
+
             new Chart(document.getElementById('weeklyChart'), {
                 type: 'bar',
+
                 data: {
                     labels: weeks.map(function (w) {
                         return 'Week of ' + w;
                     }),
+
                     datasets: [{
                         label: 'Mistakes',
                         data: weeks.map(function (w) {
@@ -616,14 +652,17 @@ subjectList.style.display = 'block';
                         })
                     }]
                 },
+
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+
                     plugins: {
                         legend: {
                             display: false
                         }
                     },
+
                     scales: {
                         y: {
                             beginAtZero: true,
@@ -638,6 +677,29 @@ subjectList.style.display = 'block';
     })
     .catch(function (error) {
         console.error('Error loading profile:', error);
+    });
+
+
+// Load practice results summary
+fetch('/api/practice/summary')
+    .then(function (response) {
+
+        if (!response.ok) {
+            throw new Error('Could not load practice summary');
+        }
+
+        return response.json();
+    })
+    .then(function (summary) {
+
+        document.getElementById('practice-total').textContent =
+            summary.totalAnswered || 0;
+
+        document.getElementById('practice-correct').textContent =
+            summary.correctAnswers || 0;
+    })
+    .catch(function (error) {
+        console.error('Error loading practice summary:', error);
     });
 
 </script>
