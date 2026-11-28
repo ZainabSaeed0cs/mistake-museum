@@ -486,6 +486,23 @@
 </section>
 
  
+<section class="panel" style="margin-top:20px;">
+    <h2>Your data</h2>
+    <p class="panel-subtitle">
+        Your mistakes, saved questions and account are stored only for this app.
+        Answers you submit are sent to Google's Gemini AI for analysis.
+        You can delete everything at any time.
+    </p>
+    <form th:action="@{/account/delete}" method="post"
+          onsubmit="return confirm('Delete your account and all your data? This cannot be undone.');">
+        <button type="submit"
+                style="padding:10px 18px; border-radius:12px; border:1px solid #b42318;
+                background:#fff; color:#b42318; cursor:pointer; font-weight:600;">
+            Delete my data
+        </button>
+    </form>
+</section>
+
 <section class="bottom-cta">
 
         <div>
