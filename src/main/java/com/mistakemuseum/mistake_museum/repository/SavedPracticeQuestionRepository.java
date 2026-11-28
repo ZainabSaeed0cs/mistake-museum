@@ -20,4 +20,7 @@ public interface SavedPracticeQuestionRepository
 
     Optional<SavedPracticeQuestion> findByStudentAndQuestionTextIgnoreCase(
             Student student, String questionText);
+    void deleteByStudentId(Long studentId);
+
+    long countByStudentId(Long studentId);
 }
