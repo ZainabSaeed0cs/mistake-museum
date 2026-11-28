@@ -2,19 +2,24 @@
 
 ### Every mistake is an opportunity to learn.
 
+**Institution:** Pakistan Institute of Engineering and Applied Sciences (PIEAS)  
+**Hackathon:** SparkTank – Capital Youth Expo  
+**Project Track:** Track 1 – Education (EdTech)
+
+**Live Application:** https://mistake-museum-production.up.railway.app  
+**GitHub Repository:** https://github.com/ZainabSaeed0cs/mistake-museum
+
+---
+
+## 1. Project Overview
+
 **Mistake Museum** is an AI-powered learning platform designed to help students understand, organize, and learn from their academic mistakes.
 
 Instead of simply marking an answer as correct or incorrect, Mistake Museum helps students explore *why* they made a mistake, identify areas that need improvement, and practise with questions tailored to their learning needs.
 
 By combining AI-assisted analysis, mistake classification, progress tracking, and personalized practice, the platform turns mistakes into opportunities for improvement.
 
-**Live Application:** https://mistake-museum-production.up.railway.app
-
-**GitHub Repository:** https://github.com/ZainabSaeed0cs/mistake-museum
-
----
-
-## 1. The Problem
+## 2. The Problem
 
 Students often repeat the same academic mistakes because they do not fully understand why their answers were incorrect.
 
@@ -27,13 +32,13 @@ As a result:
 - Students may practise without targeting their weak areas.
 - Tracking academic improvement becomes difficult.
 
-## 2. Our Solution
+## 3. Our Solution
 
 Mistake Museum provides a centralized platform where students can submit incorrect answers, receive AI-assisted explanations, track recurring mistakes, and practise based on their learning gaps.
 
 The platform focuses not only on identifying incorrect answers but also on helping students understand and learn from them.
 
-## 3. Key Features
+## 4. Key Features
 
 ### AI-Powered Mistake Analysis
 
@@ -103,7 +108,7 @@ Mistakes are organized into categories to help students understand the nature of
 
 ---
 
-## 4. Technology Stack
+## 5. Technology Stack
 
 | Technology | Purpose |
 |---|---|
@@ -131,7 +136,7 @@ Spring Data JPA is used to manage database operations.
 
 ---
 
-## 5. How It Works
+## 6. How It Works
 
 1. **Register or Log In:** Students create an account and access their personal dashboard.
 2. **Submit an Answer:** Students provide a question and their attempted answer through text or image submission.
@@ -143,7 +148,7 @@ Spring Data JPA is used to manage database operations.
 
 ---
 
-## 6. AI Integration
+## 7. AI Integration
 
 Mistake Museum integrates the **Google Gemini API** to support its learning and analysis features.
 
@@ -167,7 +172,7 @@ A stub diagnosis service is also available through the application's `stub` prof
 
 ---
 
-## 7. Getting Started
+## 8. Getting Started
 
 ### Prerequisites
 
@@ -177,7 +182,7 @@ Before running the application locally, make sure you have:
 - Git
 - An internet connection for Gemini-powered functionality
 - A Google Gemini API key
-- A terminal such as PowerShell or Bash
+- A terminal such as PowerShell, Command Prompt, or Bash
 
 Maven Wrapper is included in the repository, so a separate Maven installation is not required.
 
@@ -197,6 +202,13 @@ Set your Gemini API credentials before starting the application.
 ```powershell
 $env:GEMINI_API_KEY="your_gemini_api_key"
 $env:GEMINI_MODEL="gemini-3.5-flash-lite"
+```
+
+**macOS / Linux:**
+
+```bash
+export GEMINI_API_KEY="your_gemini_api_key"
+export GEMINI_MODEL="gemini-3.5-flash-lite"
 ```
 
 Replace the placeholder API key with your own key. Keep API credentials private and never commit them to GitHub.
@@ -223,7 +235,7 @@ The application uses H2 for local development.
 
 ---
 
-## 8. Running Tests
+## 9. Running Tests
 
 Run the project's test suite using Maven Wrapper.
 
@@ -239,15 +251,23 @@ Run the project's test suite using Maven Wrapper.
 ./mvnw clean test
 ```
 
-To clean and compile the project on Windows:
+To clean and compile the project:
+
+**Windows:**
 
 ```powershell
 .\mvnw.cmd clean compile
 ```
 
+**macOS / Linux:**
+
+```bash
+./mvnw clean compile
+```
+
 ---
 
-## 9. API Endpoints
+## 10. API Endpoints
 
 The application provides endpoints for selected application operations, including:
 
@@ -261,7 +281,7 @@ These endpoints support practice tracking and account management.
 
 ---
 
-## 10. Deployment
+## 11. Deployment
 
 Mistake Museum is deployed on **Railway**.
 
@@ -275,7 +295,7 @@ The production deployment is configured separately from the local H2 development
 
 ---
 
-## 11. Privacy and Responsible AI Use
+## 12. Privacy and Responsible AI Use
 
 - Student accounts and learning records are managed through the application.
 - Gemini API credentials are configured through environment variables rather than committed source code.
@@ -285,7 +305,7 @@ The production deployment is configured separately from the local H2 development
 
 ---
 
-## 12. Future Improvements
+## 13. Future Improvements
 
 Potential areas for further development include:
 
@@ -298,9 +318,9 @@ Potential areas for further development include:
 
 ---
 
-## 13. Team Contributions
+## 14. Team Contributions
 
-Mistake Museum was developed collaboratively by a five-member team.
+Mistake Museum was developed collaboratively by a five-member team at the **Pakistan Institute of Engineering and Applied Sciences (PIEAS)**.
 
 | Team Member | Contribution |
 |---|---:|
@@ -323,13 +343,13 @@ Mistake Museum was developed collaboratively by a five-member team.
 
 ---
 
-## 14. AI Assistance Disclosure
+## 15. AI Assistance Disclosure
 
 AI coding assistants were used during development within the project window. The team implemented, integrated, and tested the application's core logic, configuration, and integrations.
 
 ---
 
-## 15. Project Summary
+## 16. Project Summary
 
 Mistake Museum aims to make learning more effective by helping students understand their mistakes instead of simply moving past them.
 
